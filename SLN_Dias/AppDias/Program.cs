@@ -7,8 +7,8 @@ class Program
     static void Main(string[] args)
     {
         Console.WriteLine("=================================");
-        Console.WriteLine("   SISTEMA DE GESTÃO DE TAREFAS");
-        Console.WriteLine("=================================\\n");
+        Console.WriteLine("   SISTEMA DE GESTÃO DE TAREFAS  ");
+        Console.WriteLine("=================================\n");
 
         Console.Write("Digite o nome da tarefa: ");
         string nome = Console.ReadLine() ?? "Sem nome";
@@ -26,7 +26,7 @@ class Program
 
         Tarefa tarefa = new Tarefa(nome, funcionario, dataInicio, dataFim);
 
-        Console.WriteLine("\\n--- RESUMO DA TAREFA ---");
+        Console.WriteLine("\n--- RESUMO DA TAREFA ---");
         Console.WriteLine($"Tarefa: {tarefa.Nome}");
         Console.WriteLine($"Responsável: {tarefa.NomeFuncionario}");
         Console.WriteLine($"Início: {tarefa.DataInicio:dd/MM/yyyy}");
