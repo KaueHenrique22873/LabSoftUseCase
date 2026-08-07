@@ -24,6 +24,11 @@ namespace AppTask.Controllers
             var dbTasksContext = _context.Tarefas.Include(t => t.Funcionario);
             return View(await dbTasksContext.ToListAsync());
         }
+        public async Task<IActionResult> Sobre()
+        {
+
+            return View();
+        }
 
         public async Task<IActionResult> Sobre()
         {
@@ -53,6 +58,7 @@ namespace AppTask.Controllers
         public IActionResult Create()
         {
             ViewData["ListaFuncionario"] = new SelectList(_context.Funcionarios, "Codigo", "Nome");
+
             return View();
         }
 
@@ -69,7 +75,9 @@ namespace AppTask.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
             ViewData["FuncionarioId"] = new SelectList(_context.Funcionarios, "Codigo", "Nome", tarefa.FuncionarioId);
+
             return View(tarefa);
         }
 
