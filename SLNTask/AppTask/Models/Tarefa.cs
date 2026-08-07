@@ -26,5 +26,6 @@ public partial class Tarefa
 
     [ValidateNever]
 
+
     public virtual Funcionario Funcionario { get; set; } = null!;
 }
