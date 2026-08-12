@@ -30,10 +30,7 @@ namespace AppTask.Controllers
             return View();
         }
 
-        public async Task<IActionResult> Sobre()
-        {
-            return View();
-        }
+      
 
         // GET: Tarefa/Details/5
         public async Task<IActionResult> Details(int? id)
