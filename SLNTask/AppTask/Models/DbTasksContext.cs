@@ -32,7 +32,7 @@ public partial class DbTasksContext : DbContext
     {
         modelBuilder.Entity<Departamento>(entity =>
         {
-            entity.HasKey(e => e.Codigo).HasName("PK__Departam__06370DAD702121DA");
+            entity.HasKey(e => e.Codigo).HasName("PK__Departam__06370DAD73904FE2");
 
             entity.ToTable("Departamento");
 
@@ -46,7 +46,7 @@ public partial class DbTasksContext : DbContext
 
         modelBuilder.Entity<Funcionario>(entity =>
         {
-            entity.HasKey(e => e.Codigo).HasName("PK__Funciona__06370DADA953384E");
+            entity.HasKey(e => e.Codigo).HasName("PK__Funciona__06370DAD8DE01473");
 
             entity.ToTable("Funcionario");
 
@@ -56,11 +56,16 @@ public partial class DbTasksContext : DbContext
             entity.Property(e => e.Nome)
                 .HasMaxLength(100)
                 .IsUnicode(false);
+
+            entity.HasOne(d => d.Departamento).WithMany(p => p.Funcionarios)
+                .HasForeignKey(d => d.DepartamentoId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Funcionario_Departamento");
         });
 
         modelBuilder.Entity<Incidente>(entity =>
         {
-            entity.HasKey(e => e.Codigo).HasName("PK__Incident__06370DADF988AECC");
+            entity.HasKey(e => e.Codigo).HasName("PK__Incident__06370DAD00A504AF");
 
             entity.ToTable("Incidente");
 
@@ -78,7 +83,7 @@ public partial class DbTasksContext : DbContext
 
         modelBuilder.Entity<Projeto>(entity =>
         {
-            entity.HasKey(e => e.Codigo).HasName("PK__Projeto__06370DADF4881186");
+            entity.HasKey(e => e.Codigo).HasName("PK__Projeto__06370DAD812FB9B6");
 
             entity.ToTable("Projeto");
 
@@ -93,7 +98,7 @@ public partial class DbTasksContext : DbContext
 
         modelBuilder.Entity<Tarefa>(entity =>
         {
-            entity.HasKey(e => e.Codigo).HasName("PK__Tarefa__06370DAD148C0D7A");
+            entity.HasKey(e => e.Codigo).HasName("PK__Tarefa__06370DAD1D29753C");
 
             entity.ToTable("Tarefa");
 
