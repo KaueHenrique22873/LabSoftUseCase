@@ -19,10 +19,6 @@ public partial class DbTasksContext : DbContext
 
     public virtual DbSet<Funcionario> Funcionarios { get; set; }
 
-    public virtual DbSet<Incidente> Incidentes { get; set; }
-
-    public virtual DbSet<Projeto> Projetos { get; set; }
-
     public virtual DbSet<Tarefa> Tarefas { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -61,39 +57,6 @@ public partial class DbTasksContext : DbContext
                 .HasForeignKey(d => d.DepartamentoId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_Funcionario_Departamento");
-        });
-
-        modelBuilder.Entity<Incidente>(entity =>
-        {
-            entity.HasKey(e => e.Codigo).HasName("PK__Incident__06370DAD00A504AF");
-
-            entity.ToTable("Incidente");
-
-            entity.Property(e => e.DataIncidente).HasColumnType("datetime");
-            entity.Property(e => e.DescricaoProblema)
-                .HasMaxLength(250)
-                .IsUnicode(false);
-            entity.Property(e => e.Resolvido)
-                .HasMaxLength(3)
-                .IsUnicode(false);
-            entity.Property(e => e.Solucao)
-                .HasMaxLength(250)
-                .IsUnicode(false);
-        });
-
-        modelBuilder.Entity<Projeto>(entity =>
-        {
-            entity.HasKey(e => e.Codigo).HasName("PK__Projeto__06370DAD812FB9B6");
-
-            entity.ToTable("Projeto");
-
-            entity.Property(e => e.NomeProjeto)
-                .HasMaxLength(200)
-                .IsUnicode(false);
-            entity.Property(e => e.Orcamento).HasColumnType("decimal(12, 2)");
-            entity.Property(e => e.Status)
-                .HasMaxLength(30)
-                .IsUnicode(false);
         });
 
         modelBuilder.Entity<Tarefa>(entity =>
