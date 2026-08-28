@@ -11,9 +11,9 @@ namespace AppTaskZero.Controllers
 {
     public class TarefaController : Controller
     {
-        private readonly DbTasksZeroContext _context;
+        private readonly DbTasksContext _context;
 
-        public TarefaController(DbTasksZeroContext context)
+        public TarefaController(DbTasksContext context)
         {
             _context = context;
         }
