@@ -11,9 +11,9 @@ namespace AppTaskZero.Controllers
 {
     public class FuncionarioController : Controller
     {
-        private readonly DbTasksZeroContext _context;
+        private readonly DbTasksContext _context;
 
-        public FuncionarioController(DbTasksZeroContext context)
+        public FuncionarioController(DbTasksContext context)
         {
             _context = context;
         }
@@ -21,7 +21,8 @@ namespace AppTaskZero.Controllers
         // GET: Funcionario
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Funcionarios.ToListAsync());
+            var funcionarios = _context.Funcionarios.Include(f => f.Gerente);
+            return View(await funcionarios.ToListAsync());
         }
 
         // GET: Funcionario/Details/5
@@ -33,7 +34,9 @@ namespace AppTaskZero.Controllers
             }
 
             var funcionario = await _context.Funcionarios
+                .Include(f => f.Gerente)
                 .FirstOrDefaultAsync(m => m.Codigo == id);
+
             if (funcionario == null)
             {
                 return NotFound();
@@ -45,15 +48,14 @@ namespace AppTaskZero.Controllers
         // GET: Funcionario/Create
         public IActionResult Create()
         {
+            ViewData["GerenteId"] = new SelectList(_context.Gerentes, "Codigo", "Nome");
             return View();
         }
 
         // POST: Funcionario/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Codigo,Nome,Cargo")] Funcionario funcionario)
+        public async Task<IActionResult> Create([Bind("Codigo,Nome,Cargo,GerenteId")] Funcionario funcionario)
         {
             if (ModelState.IsValid)
             {
@@ -61,6 +63,8 @@ namespace AppTaskZero.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
+            ViewData["GerenteId"] = new SelectList(_context.Gerentes, "Codigo", "Nome", funcionario.GerenteId);
             return View(funcionario);
         }
 
@@ -77,15 +81,15 @@ namespace AppTaskZero.Controllers
             {
                 return NotFound();
             }
+
+            ViewData["GerenteId"] = new SelectList(_context.Gerentes, "Codigo", "Nome", funcionario.GerenteId);
             return View(funcionario);
         }
 
         // POST: Funcionario/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Codigo,Nome,Cargo")] Funcionario funcionario)
+        public async Task<IActionResult> Edit(int id, [Bind("Codigo,Nome,Cargo,GerenteId")] Funcionario funcionario)
         {
             if (id != funcionario.Codigo)
             {
@@ -112,6 +116,8 @@ namespace AppTaskZero.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+
+            ViewData["GerenteId"] = new SelectList(_context.Gerentes, "Codigo", "Nome", funcionario.GerenteId);
             return View(funcionario);
         }
 
@@ -124,7 +130,9 @@ namespace AppTaskZero.Controllers
             }
 
             var funcionario = await _context.Funcionarios
+                .Include(f => f.Gerente)
                 .FirstOrDefaultAsync(m => m.Codigo == id);
+
             if (funcionario == null)
             {
                 return NotFound();
@@ -138,16 +146,24 @@ namespace AppTaskZero.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var funcionario = await _context.Funcionarios.FindAsync(id);
+            var funcionario = await _context.Funcionarios
+                .Include(f => f.Tarefas)
+                .Include(f => f.Incidentes)
+                .FirstOrDefaultAsync(f => f.Codigo == id);
+
             if (funcionario != null)
             {
+                _context.Tarefas.RemoveRange(funcionario.Tarefas);
+                _context.Incidentes.RemoveRange(funcionario.Incidentes);
                 _context.Funcionarios.Remove(funcionario);
+
+                await _context.SaveChangesAsync();
             }
 
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
+        // Adicionado para resolver o erro de compilação do Edit
         private bool FuncionarioExists(int id)
         {
             return _context.Funcionarios.Any(e => e.Codigo == id);
