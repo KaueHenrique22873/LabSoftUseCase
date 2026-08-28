@@ -1,0 +1,169 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using AppTaskZero.Models;
+
+namespace AppTaskZero.Controllers
+{
+    public class IncidenteController : Controller
+    {
+        private readonly DbTasksContext _context;
+
+        public IncidenteController(DbTasksContext context)
+        {
+            _context = context;
+        }
+
+        // GET: Incidente
+        public async Task<IActionResult> Index()
+        {
+            var dbTasksContext = _context.Incidentes.Include(i => i.Funcionario).Include(i => i.Tarefa);
+            return View(await dbTasksContext.ToListAsync());
+        }
+
+        // GET: Incidente/Details/5
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var incidente = await _context.Incidentes
+                .Include(i => i.Funcionario)
+                .Include(i => i.Tarefa)
+                .FirstOrDefaultAsync(m => m.Codigo == id);
+            if (incidente == null)
+            {
+                return NotFound();
+            }
+
+            return View(incidente);
+        }
+
+        // GET: Incidente/Create
+        public IActionResult Create()
+        {
+            ViewData["FuncionarioId"] = new SelectList(_context.Funcionarios, "Codigo", "Codigo");
+            ViewData["TarefaId"] = new SelectList(_context.Tarefas, "Codigo", "Codigo");
+            return View();
+        }
+
+        // POST: Incidente/Create
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create([Bind("Codigo,Titulo,Descricao,Prioridade,StatusIncidente,DataAbertura,DataResolucao,FuncionarioId,TarefaId")] Incidente incidente)
+        {
+            if (ModelState.IsValid)
+            {
+                _context.Add(incidente);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            ViewData["FuncionarioId"] = new SelectList(_context.Funcionarios, "Codigo", "Codigo", incidente.FuncionarioId);
+            ViewData["TarefaId"] = new SelectList(_context.Tarefas, "Codigo", "Codigo", incidente.TarefaId);
+            return View(incidente);
+        }
+
+        // GET: Incidente/Edit/5
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var incidente = await _context.Incidentes.FindAsync(id);
+            if (incidente == null)
+            {
+                return NotFound();
+            }
+            ViewData["FuncionarioId"] = new SelectList(_context.Funcionarios, "Codigo", "Codigo", incidente.FuncionarioId);
+            ViewData["TarefaId"] = new SelectList(_context.Tarefas, "Codigo", "Codigo", incidente.TarefaId);
+            return View(incidente);
+        }
+
+        // POST: Incidente/Edit/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, [Bind("Codigo,Titulo,Descricao,Prioridade,StatusIncidente,DataAbertura,DataResolucao,FuncionarioId,TarefaId")] Incidente incidente)
+        {
+            if (id != incidente.Codigo)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(incidente);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!IncidenteExists(incidente.Codigo))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction(nameof(Index));
+            }
+            ViewData["FuncionarioId"] = new SelectList(_context.Funcionarios, "Codigo", "Codigo", incidente.FuncionarioId);
+            ViewData["TarefaId"] = new SelectList(_context.Tarefas, "Codigo", "Codigo", incidente.TarefaId);
+            return View(incidente);
+        }
+
+        // GET: Incidente/Delete/5
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var incidente = await _context.Incidentes
+                .Include(i => i.Funcionario)
+                .Include(i => i.Tarefa)
+                .FirstOrDefaultAsync(m => m.Codigo == id);
+            if (incidente == null)
+            {
+                return NotFound();
+            }
+
+            return View(incidente);
+        }
+
+        // POST: Incidente/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var incidente = await _context.Incidentes.FindAsync(id);
+            if (incidente != null)
+            {
+                _context.Incidentes.Remove(incidente);
+            }
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
+        private bool IncidenteExists(int id)
+        {
+            return _context.Incidentes.Any(e => e.Codigo == id);
+        }
+    }
+}
