@@ -24,4 +24,6 @@ public partial class Tarefa
     public int FuncionarioId { get; set; }
 
     public virtual Funcionario Funcionario { get; set; } = null!;
+
+    public virtual ICollection<Incidente> Incidentes { get; set; } = new List<Incidente>();
 }
