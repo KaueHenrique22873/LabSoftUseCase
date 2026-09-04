@@ -1,2 +1,21 @@
 ﻿<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
 <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+
+<script>
+    // Sobrescreve o método de validação de número para aceitar o formato pt-BR
+    $.validator.methods.number = function (value, element) {
+        // Aceita números com ou sem ponto de milhar e com vírgula para decimal
+        return this.optional(element) ||
+               /^-?(?:\d+|\d{1,3}(?:\.\d{3})+)(?:,\d+)?$/.test(value);
+    };
+
+    // Sobrescreve o método de range (intervalo) para entender a vírgula antes de comparar
+    $.validator.methods.range = function (value, element, param) {
+        if (!value) return this.optional(element);
+
+        // Remove pontos de milhar e troca vírgula por ponto para o JavaScript calcular
+        var globalizedValue = parseFloat(value.replace(/\./g, "").replace(",", "."));
+
+        return this.optional(element) || (globalizedValue >= param[0] && globalizedValue <= param[1]);
+    };
+</script>
