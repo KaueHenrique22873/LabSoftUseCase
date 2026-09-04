@@ -1,66 +1,219 @@
 ﻿@model AppTask.Models.Tarefa
+@*[cite: 1] *@
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Detalhes";
 }
 
-<h1>Details</h1>
+<style>
+    :root {
+        --primary: #5C5CE2;
+        --text-main: #172033;
+        --text-sec: #718096;
+        --border: #E0E5ED;
+        --bg: #F6F7FB;
+        --card-bg: #FFFFFF;
+    }
 
-<div>
-    <h4>Tarefa</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Descricao)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Descricao)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DataPlanejada)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DataPlanejada)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DataIniciada)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DataIniciada)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DataFinalizada)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DataFinalizada)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DataCancelada)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DataCancelada)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.StatusTarefa)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.StatusTarefa)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Prazo)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Prazo)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Funcionario)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Funcionario.Codigo)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Codigo">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    .details-container {
+        font-family: 'Inter', sans-serif;
+        background: var(--bg);
+        padding: 58px 16px;
+        min-height: 100vh;
+        color: var(--text-main);
+        display: flex;
+        justify-content: center;
+    }
+
+    .details-wrapper {
+        width: 100%;
+        max-width: 800px;
+    }
+
+    .card {
+        background: var(--card-bg);
+        border-radius: 14px;
+        padding: 40px;
+        border: 1px solid var(--border);
+        box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+    }
+
+    .card-header {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        padding-bottom: 24px;
+        border-bottom: 1px solid var(--border);
+        margin-bottom: 24px;
+    }
+
+    .avatar {
+        width: 64px;
+        height: 64px;
+        border-radius: 14px;
+        background: #EEEDFF;
+        color: var(--primary);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 1.8rem;
+        font-weight: 800;
+    }
+
+    .title-group h1 {
+        margin: 0 0 4px 0;
+        font-size: 1.6rem;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+    }
+
+    .code-id {
+        color: var(--text-sec);
+        font-size: 0.9rem;
+        font-weight: 500;
+        margin: 0;
+    }
+
+    .data-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px 16px;
+    }
+
+    .data-item {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .data-label {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        color: var(--text-sec);
+        font-weight: 700;
+        letter-spacing: 0.05em;
+    }
+
+    .data-value {
+        font-weight: 700;
+        font-size: 1rem;
+        color: var(--text-main);
+    }
+
+    .actions {
+        display: flex;
+        gap: 16px;
+        margin-top: 40px;
+        padding-top: 24px;
+        border-top: 1px solid var(--border);
+    }
+
+    .btn-primary {
+        background: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        padding: 12px 24px;
+        font-weight: 750;
+        text-decoration: none;
+        display: inline-block;
+        transition: all 0.2s;
+        box-shadow: 0 4px 12px rgba(92,92,226,0.15);
+    }
+
+        .btn-primary:hover {
+            background: #4747BC;
+            transform: translateY(-2px);
+        }
+
+    .btn-secondary {
+        background: white;
+        color: var(--text-main);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 12px 24px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: background 0.2s;
+    }
+
+        .btn-secondary:hover {
+            background: #F6F7FB;
+        }
+
+    @@media (max-width: 560px) {
+        .card {
+            padding: 24px;
+        }
+
+        .data-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .actions {
+            flex-direction: column;
+        }
+
+        .btn-primary, .btn-secondary {
+            text-align: center;
+            width: 100%;
+            box-sizing: border-box;
+        }
+    }
+</style>
+
+<div class="details-container">
+    <div class="details-wrapper">
+        <div class="card">
+            <div class="card-header">
+                <div class="avatar">
+                    @if (!string.IsNullOrEmpty(Model.Descricao))
+                    {
+                        @Model.Descricao.Substring(0, 1).ToUpper()
+                    }
+                    else
+                    {
+
+                        <text>T</text>
+                    }
+                </div>
+                <div class="title-group">
+                    <h1>@Html.DisplayFor(model => model.Descricao)</h1>
+                    <p class="code-id">Código: #@Model.Codigo</p>
+                </div>
+            </div>
+
+            <div class="data-grid">
+                <div class="data-item">
+                    <span class="data-label">@Html.DisplayNameFor(model => model.DataPlanejada)</span>
+                    <span class="data-value">@Html.DisplayFor(model => model.DataPlanejada)</span>
+                </div>
+                <div class="data-item">
+                    <span class="data-label">@Html.DisplayNameFor(model => model.Prazo)</span>
+                    <span class="data-value">@Html.DisplayFor(model => model.Prazo)</span>
+                </div>
+                <div class="data-item">
+                    <span class="data-label">@Html.DisplayNameFor(model => model.DataIniciada)</span>
+                    <span class="data-value">@Html.DisplayFor(model => model.DataIniciada)</span>
+                </div>
+                <div class="data-item">
+                    <span class="data-label">@Html.DisplayNameFor(model => model.DataFinalizada)</span>
+                    <span class="data-value">@Html.DisplayFor(model => model.DataFinalizada)</span>
+                </div>
+                <div class="data-item">
+                    <span class="data-label">@Html.DisplayNameFor(model => model.StatusTarefa)</span>
+                    <span class="data-value">@Html.DisplayFor(model => model.StatusTarefa)</span>
+                </div>
+                <div class="data-item">
+                    <span class="data-label">@Html.DisplayNameFor(model => model.Funcionario)</span>
+                    <span class="data-value">@Html.DisplayFor(model => model.Funcionario.Codigo)</span>
+                </div>
+            </div>
+
+            <div class="actions">
+                <a asp-action="Edit" asp-route-id="@Model?.Codigo" class="btn-primary">Editar Tarefa</a>
+                <a asp-action="Index" class="btn-secondary">Voltar à Listagem</a>
+            </div>
+        </div>
+    </div>
 </div>
