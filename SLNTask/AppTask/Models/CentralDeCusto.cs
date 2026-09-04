@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+
 
 namespace AppTask.Models;
 
@@ -9,5 +11,6 @@ public partial class CentralDeCusto
 
     public string NomeCentral { get; set; } = null!;
 
-    public decimal? ValorMetaAnual { get; set; }
+    [Column(TypeName = "decimal(18,2)")]
+    public decimal ValorMetaAnual { get; set; }
 }
