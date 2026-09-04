@@ -1,33 +1,231 @@
 ﻿@model AppTask.Models.CentralDeCusto
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Nova central de custo";
 }
 
-<h1>Create</h1>
+<style>
+    :root {
+        --brand-primary: #5C5CE2;
+        --brand-primary-dark: #4747BC;
+        --brand-primary-light: #EEEDFF;
+        --text-primary: #172033;
+        --text-secondary: #718096;
+        --text-muted: #A0AABD;
+        --background: #F6F7FB;
+        --surface: #FFFFFF;
+        --surface-soft: #F8F9FC;
+        --surface-hover: #FAFAFF;
+        --border: #E7EBF1;
+        --border-light: #EEF1F5;
+        --input-border: #E0E5ED;
+        --danger: #B44A58;
+        --radius-input: 10px;
+        --radius-card: 18px;
+        --shadow-card: 0 10px 30px rgba(33, 47, 77, .06);
+        --shadow-button: 0 8px 17px rgba(92, 92, 226, .18);
+    }
 
-<h4>CentralDeCusto</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
+    .cost-page {
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 38px 0 58px;
+        color: var(--text-primary);
+        font-family: Inter, "Segoe UI", system-ui, sans-serif;
+    }
+
+    .cost-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: end;
+        gap: 20px;
+        margin-bottom: 26px;
+    }
+
+    .eyebrow {
+        color: var(--brand-primary);
+        font-size: .74rem;
+        font-weight: 800;
+        letter-spacing: .13em;
+        text-transform: uppercase;
+    }
+
+    .page-title {
+        margin: 7px 0 8px;
+        font-size: clamp(2rem,4vw,3rem);
+        font-weight: 800;
+        letter-spacing: -.055em;
+        line-height: 1;
+    }
+
+    .page-subtitle {
+        margin: 0;
+        color: var(--text-secondary);
+        line-height: 1.6;
+    }
+
+    .form-card {
+        padding: 30px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-card);
+        background: var(--surface);
+        box-shadow: var(--shadow-card);
+    }
+
+    .section-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 0 0 22px;
+        padding-bottom: 13px;
+        border-bottom: 1px solid var(--border-light);
+        font-size: 1.08rem;
+        font-weight: 800;
+    }
+
+    .section-number {
+        display: grid;
+        place-items: center;
+        width: 28px;
+        height: 28px;
+        border-radius: 9px;
+        background: var(--brand-primary-light);
+        color: var(--brand-primary);
+        font-size: .8rem;
+        font-weight: 850;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-label, label {
+        display: block;
+        margin-bottom: 7px;
+        color: var(--text-primary);
+        font-weight: 750;
+    }
+
+    .form-control {
+        width: 100%;
+        min-height: 45px;
+        border: 1px solid var(--input-border);
+        border-radius: var(--radius-input);
+        padding: 10px 13px;
+        color: var(--text-primary);
+        background: var(--surface);
+        transition: border-color .16s, box-shadow .16s;
+    }
+
+        .form-control:focus {
+            border-color: var(--brand-primary);
+            outline: 0;
+            box-shadow: 0 0 0 3px rgba(92,92,226,.12);
+        }
+
+    .text-danger {
+        display: block;
+        margin-top: 5px;
+        color: var(--danger);
+        font-size: .8rem;
+    }
+
+    .form-actions {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-top: 28px;
+    }
+
+    .primary-button {
+        border: 0;
+        border-radius: 11px;
+        padding: 10px 17px;
+        background: var(--brand-primary);
+        color: #fff;
+        font-weight: 750;
+        text-decoration: none;
+        box-shadow: var(--shadow-button);
+        transition: transform .16s, background .16s;
+        cursor: pointer;
+    }
+
+        .primary-button:hover {
+            background: var(--brand-primary-dark);
+            color: #fff;
+            transform: translateY(-2px);
+        }
+
+    .cancel-link {
+        color: var(--text-secondary);
+        font-weight: 700;
+        text-decoration: none;
+    }
+
+        .cancel-link:hover {
+            color: var(--brand-primary);
+        }
+
+    @@media (max-width:640px) {
+        .cost-page {
+            padding: 27px 15px 44px;
+        }
+
+        .form-card {
+            padding: 21px;
+        }
+
+        .form-actions {
+            align-items: stretch;
+            flex-direction: column;
+        }
+
+            .form-actions a, .form-actions button {
+                width: 100%;
+                text-align: center;
+            }
+    }
+
+    @@media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+            transition-duration: .01ms !important;
+        }
+    }
+</style>
+
+<main class="cost-page">
+    <header class="cost-header">
+        <div>
+            <span class="eyebrow">Administração financeira</span>
+            <h1 class="page-title">Nova central de custo</h1>
+            <p class="page-subtitle">Cadastre uma central para organizar metas e acompanhar os seus custos.</p>
+        </div>
+    </header>
+
+    <section class="form-card" aria-labelledby="form-title">
+        <h2 id="form-title" class="section-title"><span class="section-number">1</span>Informações da central</h2>
+        <form asp-action="Create" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="NomeCentral" class="control-label"></label>
-                <input asp-for="NomeCentral" class="form-control" />
+                <label asp-for="NomeCentral" class="form-label">Nome da central</label>
+                <input asp-for="NomeCentral" class="form-control" placeholder="Ex.: Operações" autocomplete="organization" />
                 <span asp-validation-for="NomeCentral" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <label asp-for="ValorMetaAnual" class="form-label">Meta anual</label>
+                <input asp-for="ValorMetaAnual" class="form-control" placeholder="Informe o valor da meta" inputmode="decimal" />
+                <span asp-validation-for="ValorMetaAnual" class="text-danger"></span>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="primary-button">Criar central</button>
+                <a asp-action="Index" class="cancel-link">Cancelar</a>
             </div>
         </form>
-    </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+    </section>
+</main>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

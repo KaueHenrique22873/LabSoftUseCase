@@ -1,39 +1,209 @@
 ﻿@model AppTask.Models.CentralDeCusto
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Editar central de custo";
 }
 
-<h1>Edit</h1>
+<style>
+    :root {
+        --brand: #5C5CE2;
+        --brand-dark: #4747BC;
+        --brand-light: #EEEDFF;
+        --ink: #172033;
+        --muted: #718096;
+        --border: #E7EBF1;
+        --input: #E0E5ED;
+        --danger: #B44A58;
+        --surface: #FFF;
+        --shadow: 0 10px 30px rgba(33,47,77,.06);
+    }
 
-<h4>CentralDeCusto</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
+    .cost-page {
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 38px 0 58px;
+        color: var(--ink);
+        font-family: Inter,"Segoe UI",system-ui,sans-serif;
+    }
+
+    .eyebrow {
+        color: var(--brand);
+        font-size: .74rem;
+        font-weight: 800;
+        letter-spacing: .13em;
+        text-transform: uppercase;
+    }
+
+    .page-title {
+        margin: 7px 0 8px;
+        font-size: clamp(2rem,4vw,3rem);
+        font-weight: 800;
+        letter-spacing: -.055em;
+        line-height: 1;
+    }
+
+    .page-subtitle {
+        margin: 0 0 26px;
+        color: var(--muted);
+        line-height: 1.6;
+    }
+
+    .form-card {
+        padding: 30px;
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        background: var(--surface);
+        box-shadow: var(--shadow);
+    }
+
+    .section-title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 0 0 22px;
+        padding-bottom: 13px;
+        border-bottom: 1px solid #EEF1F5;
+        font-size: 1.08rem;
+        font-weight: 800;
+    }
+
+    .section-number {
+        display: grid;
+        place-items: center;
+        width: 28px;
+        height: 28px;
+        border-radius: 9px;
+        background: var(--brand-light);
+        color: var(--brand);
+        font-size: .8rem;
+        font-weight: 850;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 7px;
+        font-weight: 750;
+    }
+
+    .form-control {
+        width: 100%;
+        min-height: 45px;
+        border: 1px solid var(--input);
+        border-radius: 10px;
+        padding: 10px 13px;
+        color: var(--ink);
+        background: #fff;
+        transition: border-color .16s,box-shadow .16s;
+    }
+
+        .form-control:focus {
+            border-color: var(--brand);
+            outline: 0;
+            box-shadow: 0 0 0 3px rgba(92,92,226,.12);
+        }
+
+    .text-danger {
+        display: block;
+        margin-top: 5px;
+        color: var(--danger);
+        font-size: .8rem;
+    }
+
+    .form-actions {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-top: 28px;
+    }
+
+    .primary-button {
+        border: 0;
+        border-radius: 11px;
+        padding: 10px 17px;
+        background: var(--brand);
+        color: #fff;
+        font-weight: 750;
+        box-shadow: 0 8px 17px rgba(92,92,226,.18);
+        transition: transform .16s,background .16s;
+        cursor: pointer;
+    }
+
+        .primary-button:hover {
+            background: var(--brand-dark);
+            transform: translateY(-2px);
+        }
+
+    .cancel-link {
+        color: var(--muted);
+        font-weight: 700;
+        text-decoration: none;
+    }
+
+        .cancel-link:hover {
+            color: var(--brand);
+        }
+
+    @@media (max-width:640px) {
+        .cost-page {
+            padding: 27px 15px 44px;
+        }
+
+        .form-card {
+            padding: 21px;
+        }
+
+        .form-actions {
+            align-items: stretch;
+            flex-direction: column;
+        }
+
+            .form-actions a, .form-actions button {
+                width: 100%;
+                text-align: center;
+            }
+    }
+
+    @@media (prefers-reduced-motion:reduce) {
+        *, *::before, *::after {
+            transition-duration: .01ms !important;
+        }
+    }
+</style>
+
+<main class="cost-page">
+    <span class="eyebrow">Administração financeira</span>
+    <h1 class="page-title">Editar central de custo</h1>
+    <p class="page-subtitle">Atualize os dados da central e mantenha o planejamento financeiro em dia.</p>
+
+    <section class="form-card" aria-labelledby="form-title">
+        <h2 id="form-title" class="section-title"><span class="section-number">1</span>Informações da central</h2>
+        <form asp-action="Edit" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Codigo" />
             <div class="form-group">
-                <label asp-for="NomeCentral" class="control-label"></label>
-                <input asp-for="NomeCentral" class="form-control" />
+                <label asp-for="NomeCentral">Nome da central</label>
+                <input asp-for="NomeCentral" class="form-control" autocomplete="organization" />
                 <span asp-validation-for="NomeCentral" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="ValorMetaAnual" class="control-label"></label>
-                <input asp-for="ValorMetaAnual" class="form-control" />
+                <label asp-for="ValorMetaAnual">Meta anual</label>
+                <input asp-for="ValorMetaAnual" class="form-control" inputmode="decimal" />
                 <span asp-validation-for="ValorMetaAnual" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+            <div class="form-actions">
+                <button type="submit" class="primary-button">Salvar alterações</button>
+                <a asp-action="Index" class="cancel-link">Cancelar</a>
             </div>
         </form>
-    </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+    </section>
+</main>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

@@ -1,30 +1,190 @@
 ﻿@model AppTask.Models.CentralDeCusto
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Detalhes da central";
+    var initial = string.IsNullOrWhiteSpace(Model?.NomeCentral) ? "C" : Model.NomeCentral.Trim().Substring(0, 1).ToUpperInvariant();
 }
 
-<h1>Details</h1>
+<style>
+    :root {
+        --brand: #5C5CE2;
+        --brand-light: #EEEDFF;
+        --ink: #172033;
+        --muted: #718096;
+        --border: #E7EBF1;
+        --surface: #FFF;
+    }
 
-<div>
-    <h4>CentralDeCusto</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.NomeCentral)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.NomeCentral)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ValorMetaAnual)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ValorMetaAnual)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Codigo">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+    .cost-page {
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 38px 0 58px;
+        color: var(--ink);
+        font-family: Inter,"Segoe UI",system-ui,sans-serif;
+    }
+
+    .eyebrow {
+        color: var(--brand);
+        font-size: .74rem;
+        font-weight: 800;
+        letter-spacing: .13em;
+        text-transform: uppercase;
+    }
+
+    .page-title {
+        margin: 7px 0 8px;
+        font-size: clamp(2rem,4vw,3rem);
+        font-weight: 800;
+        letter-spacing: -.055em;
+        line-height: 1;
+    }
+
+    .page-subtitle {
+        margin: 0 0 26px;
+        color: var(--muted);
+        line-height: 1.6;
+    }
+
+    .details-card {
+        padding: 30px;
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        background: var(--surface);
+        box-shadow: 0 10px 30px rgba(33,47,77,.06);
+    }
+
+    .identity {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 28px;
+        padding-bottom: 22px;
+        border-bottom: 1px solid #EEF1F5;
+    }
+
+    .avatar {
+        display: grid;
+        place-items: center;
+        width: 52px;
+        height: 52px;
+        border-radius: 16px;
+        background: var(--brand-light);
+        color: var(--brand);
+        font-size: 1.35rem;
+        font-weight: 850;
+    }
+
+    .identity h2 {
+        margin: 0 0 4px;
+        font-size: 1.35rem;
+        letter-spacing: -.03em;
+    }
+
+    .identity p {
+        margin: 0;
+        color: var(--muted);
+        font-size: .86rem;
+    }
+
+    .details-grid {
+        display: grid;
+        grid-template-columns: repeat(2,minmax(0,1fr));
+        gap: 18px 24px;
+    }
+
+    .details-item small {
+        display: block;
+        color: var(--muted);
+        font-size: .72rem;
+        font-weight: 800;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+    }
+
+    .details-item strong {
+        display: block;
+        margin-top: 6px;
+        color: var(--ink);
+        line-height: 1.5;
+    }
+
+    .actions {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        margin-top: 30px;
+        padding-top: 22px;
+        border-top: 1px solid #EEF1F5;
+    }
+
+    .primary-button {
+        border: 0;
+        border-radius: 11px;
+        padding: 10px 17px;
+        background: var(--brand);
+        color: #fff;
+        font-weight: 750;
+        text-decoration: none;
+        box-shadow: 0 8px 17px rgba(92,92,226,.18);
+        transition: transform .16s,background .16s;
+    }
+
+        .primary-button:hover {
+            background: #4747BC;
+            color: #fff;
+            transform: translateY(-2px);
+        }
+
+    .cancel-link {
+        color: var(--muted);
+        font-weight: 700;
+        text-decoration: none;
+    }
+
+        .cancel-link:hover {
+            color: var(--brand);
+        }
+
+    @@media (max-width:640px) {
+        .cost-page {
+            padding: 27px 15px 44px;
+        }
+
+        .details-card {
+            padding: 21px;
+        }
+
+        .details-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .actions {
+            align-items: stretch;
+            flex-direction: column;
+        }
+
+            .actions a {
+                width: 100%;
+                text-align: center;
+            }
+    }
+</style>
+
+<main class="cost-page">
+    <span class="eyebrow">Administração financeira</span>
+    <h1 class="page-title">Detalhes da central</h1>
+    <p class="page-subtitle">Confira as informações cadastradas para esta central de custo.</p>
+
+    <section class="details-card" aria-labelledby="central-name">
+        <div class="identity">
+            <div class="avatar" aria-hidden="true">@initial</div>
+            <div><h2 id="central-name">@Model.NomeCentral</h2><p>Central de custo cadastrada no sistema</p></div>
+        </div>
+        <div class="details-grid">
+            <div class="details-item"><small>Código</small><strong>@Model.Codigo</strong></div>
+            <div class="details-item"><small>Nome da central</small><strong>@Model.NomeCentral</strong></div>
+            <div class="details-item"><small>Meta anual</small><strong>@Model.ValorMetaAnual.ToString("C")</strong></div>
+        </div>
+        <div class="actions"><a asp-action="Edit" asp-route-id="@Model?.Codigo" class="primary-button">Editar central</a><a asp-action="Index" class="cancel-link">Voltar para a lista</a></div>
+    </section>
+</main>
