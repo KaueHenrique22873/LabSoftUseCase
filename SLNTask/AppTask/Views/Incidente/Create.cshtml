@@ -1,52 +1,103 @@
 ﻿@model AppTask.Models.Incidente
-
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Novo incidente";
 }
+<style>
+    .incident-form-page {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 38px 0 58px;
+        color: #172033
+    }
 
-<h1>Create</h1>
+    .incident-eyebrow {
+        color: #5c5ce2;
+        font-size: .74rem;
+        font-weight: 800;
+        letter-spacing: .13em;
+        text-transform: uppercase
+    }
 
-<h4>Incidente</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="DescricaoProblema" class="control-label"></label>
-                <input asp-for="DescricaoProblema" class="form-control" />
-                <span asp-validation-for="DescricaoProblema" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DataIncidente" class="control-label"></label>
-                <input asp-for="DataIncidente" class="form-control" />
-                <span asp-validation-for="DataIncidente" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Solucao" class="control-label"></label>
-                <input asp-for="Solucao" class="form-control" />
-                <span asp-validation-for="Solucao" class="text-danger"></span>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="Resolvido" /> @Html.DisplayNameFor(model => model.Resolvido)
-                </label>
-            </div>
-            <div class="form-group">
-                <label asp-for="FuncionarioId" class="control-label"></label>
-                <select asp-for="FuncionarioId" class ="form-control" asp-items="ViewBag.FuncionarioId"></select>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
-</div>
+    .incident-form-page h1 {
+        margin: 7px 0 8px;
+        font-weight: 800;
+        letter-spacing: -.05em
+    }
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+    .incident-form-page > p {
+        margin-bottom: 24px;
+        color: #718096
+    }
 
+    .incident-form-card {
+        padding: 26px;
+        border: 1px solid #e7ebf1;
+        border-radius: 18px;
+        background: #fff;
+        box-shadow: 0 10px 30px #212f4d0b
+    }
+
+        .incident-form-card label {
+            margin-bottom: 7px;
+            font-weight: 750
+        }
+
+        .incident-input, .incident-form-card select {
+            border: 1px solid #e0e5ed;
+            border-radius: 10px;
+            padding: 11px 13px
+        }
+
+            .incident-input:focus, .incident-form-card select:focus {
+                border-color: #5c5ce2;
+                outline: 0;
+                box-shadow: 0 0 0 3px #5c5ce21f
+            }
+
+    .incident-form-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-top: 24px
+    }
+
+    .incident-submit {
+        border: 0;
+        border-radius: 10px;
+        padding: 10px 18px;
+        background: #5c5ce2;
+        color: #fff;
+        font-weight: 750
+    }
+
+        .incident-submit:hover {
+            background: #4747bc
+        }
+
+    .incident-back {
+        color: #718096;
+        font-weight: 700;
+        text-decoration: none
+    }
+
+        .incident-back:hover {
+            color: #5c5ce2
+        }
+
+    @@media(max-width:560px) {
+        .incident-form-page {
+            padding-top: 27px
+        }
+
+        .incident-form-card {
+            padding: 21px
+        }
+    }
+</style>
+<div class="incident-form-page"><div class="incident-eyebrow">Monitoramento operacional</div><h1>Novo incidente</h1><p>Registre o problema para que a equipe possa acompanhar a resolução.</p><div class="incident-form-card"><form asp-action="Create"><div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div><div class="mb-3"><label asp-for="DescricaoProblema" class="form-label">Descrição do problema</label><textarea asp-for="DescricaoProblema" class="form-control incident-input" rows="3" placeholder="Descreva o que aconteceu..." autofocus></textarea><span asp-validation-for="DescricaoProblema" class="text-danger small"></span></div><div class="mb-3"><label asp-for="DataIncidente" class="form-label">Data do incidente</label><input asp-for="DataIncidente" class="form-control incident-input" /><span asp-validation-for="DataIncidente" class="text-danger small"></span></div><div class="mb-3"><label asp-for="Solucao" class="form-label">Solução aplicada</label><textarea asp-for="Solucao" class="form-control incident-input" rows="3" placeholder="Informe a solução, se já houver..."></textarea><span asp-validation-for="Solucao" class="text-danger small"></span></div><div class="form-check mb-3"><input class="form-check-input" asp-for="Resolvido" /><label class="form-check-label" asp-for="Resolvido">Incidente resolvido</label></div><div class="mb-3"><label asp-for="FuncionarioId" class="form-label">Funcionário responsável</label><select asp-for="FuncionarioId" class="form-select" asp-items="ViewBag.FuncionarioId"><option value="">Selecione um funcionário</option></select><span asp-validation-for="FuncionarioId" class="text-danger small"></span></div><div class="incident-form-actions"><button type="submit" class="btn incident-submit">Salvar incidente</button><a asp-action="Index" class="incident-back">Cancelar</a></div></form></div></div>
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
 }

@@ -1,48 +1,165 @@
 ﻿@model AppTask.Models.Incidente
-
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Detalhes do incidente"; var problema = string.IsNullOrWhiteSpace(Model.DescricaoProblema) ? "Sem descrição" : Model.DescricaoProblema.Trim(); var solucao = string.IsNullOrWhiteSpace(Model.Solucao) ? "Não informada" : Model.Solucao.Trim();
 }
+<style>
+    .incident-details-page {
+        max-width: 850px;
+        margin: 0 auto;
+        padding: 38px 0 58px;
+        color: #172033
+    }
 
-<h1>Details</h1>
+    .incident-eyebrow {
+        color: #5c5ce2;
+        font-size: .74rem;
+        font-weight: 800;
+        letter-spacing: .13em;
+        text-transform: uppercase
+    }
 
-<div>
-    <h4>Incidente</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DescricaoProblema)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DescricaoProblema)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DataIncidente)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DataIncidente)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Solucao)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Solucao)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Resolvido)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Resolvido)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Funcionario)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Funcionario.Codigo)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Codigo">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+    .incident-details-page h1 {
+        margin: 7px 0 8px;
+        font-weight: 800;
+        letter-spacing: -.05em
+    }
+
+    .incident-details-page > p {
+        margin-bottom: 24px;
+        color: #718096
+    }
+
+    .incident-details-card {
+        padding: 28px;
+        border: 1px solid #e7ebf1;
+        border-radius: 18px;
+        background: #fff;
+        box-shadow: 0 10px 30px #212f4d0b
+    }
+
+    .incident-title {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 15px;
+        padding-bottom: 22px;
+        border-bottom: 1px solid #eef1f5
+    }
+
+        .incident-title h2 {
+            margin: 0;
+            font-size: 1.3rem
+        }
+
+    .incident-code {
+        color: #718096;
+        font-size: .82rem
+    }
+
+    .incident-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        border-radius: 999px;
+        padding: 6px 10px;
+        font-size: .75rem;
+        font-weight: 800;
+        white-space: nowrap
+    }
+
+        .incident-status:before {
+            content: "";
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor
+        }
+
+    .resolved {
+        background: #def6ec;
+        color: #24815e
+    }
+
+    .open {
+        background: #fff0d6;
+        color: #9b651d
+    }
+
+    .incident-detail-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 22px;
+        padding: 23px 0
+    }
+
+        .incident-detail-grid .full {
+            grid-column: 1/-1
+        }
+
+        .incident-detail-grid small {
+            display: block;
+            color: #718096;
+            font-size: .75rem;
+            font-weight: 800;
+            letter-spacing: .07em;
+            text-transform: uppercase
+        }
+
+        .incident-detail-grid strong {
+            display: block;
+            margin-top: 7px;
+            line-height: 1.5
+        }
+
+    .incident-details-actions {
+        display: flex;
+        gap: 12px;
+        padding-top: 20px;
+        border-top: 1px solid #eef1f5
+    }
+
+    .incident-edit {
+        border-radius: 10px;
+        padding: 10px 17px;
+        background: #5c5ce2;
+        color: #fff;
+        font-weight: 750;
+        text-decoration: none
+    }
+
+        .incident-edit:hover {
+            background: #4747bc;
+            color: #fff
+        }
+
+    .incident-back {
+        align-self: center;
+        color: #718096;
+        font-weight: 700;
+        text-decoration: none
+    }
+
+        .incident-back:hover {
+            color: #5c5ce2
+        }
+
+    @@media(max-width:560px) {
+        .incident-title {
+            align-items: flex-start;
+            flex-direction: column
+        }
+
+        .incident-detail-grid {
+            grid-template-columns: 1fr
+        }
+
+            .incident-detail-grid .full {
+                grid-column: auto
+            }
+
+        .incident-details-card {
+            padding: 21px
+        }
+    }
+</style>
+<div class="incident-details-page"><div class="incident-eyebrow">Registro operacional</div><h1>Detalhes do incidente</h1><p>Confira todas as informações da ocorrência registrada.</p><div class="incident-details-card"><div class="incident-title"><div><h2>@problema</h2><span class="incident-code">Código #@Model.Codigo</span></div><span class="incident-status @(Model.Resolvido == true ? "resolved" : "open")">@(Model.Resolvido == true ? "Resolvido" : "Em aberto")</span></div><div class="incident-detail-grid"><div class="full"><small>Descrição do problema</small><strong>@problema</strong></div><div><small>Data do incidente</small><strong>@Model.DataIncidente</strong></div><div><small>Funcionário responsável</small><strong>@(Model.Funcionario?.Codigo.ToString() ?? "Não atribuído")</strong></div><div class="full"><small>Solução aplicada</small><strong>@solucao</strong></div></div><div class="incident-details-actions"><a asp-action="Edit" asp-route-id="@Model.Codigo" class="incident-edit">Editar incidente</a><a asp-action="Index" class="incident-back">Voltar para lista</a></div></div></div>

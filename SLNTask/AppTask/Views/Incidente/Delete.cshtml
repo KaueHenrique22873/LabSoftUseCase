@@ -1,51 +1,93 @@
 ﻿@model AppTask.Models.Incidente
-
 @{
-    ViewData["Title"] = "Delete";
+    ViewData["Title"] = "Excluir incidente"; var problema = string.IsNullOrWhiteSpace(Model.DescricaoProblema) ? "Sem descrição" : Model.DescricaoProblema.Trim();
 }
+<style>
+    .incident-delete-page {
+        max-width: 680px;
+        margin: 0 auto;
+        padding: 48px 0 65px;
+        color: #172033
+    }
 
-<h1>Delete</h1>
+    .incident-delete-card {
+        padding: 30px;
+        border: 1px solid #ffd5da;
+        border-radius: 18px;
+        background: #fff;
+        box-shadow: 0 10px 30px #212f4d0b
+    }
 
-<h3>Are you sure you want to delete this?</h3>
-<div>
-    <h4>Incidente</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DescricaoProblema)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DescricaoProblema)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DataIncidente)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DataIncidente)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Solucao)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Solucao)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Resolvido)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Resolvido)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Funcionario)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Funcionario.Codigo)
-        </dd>
-    </dl>
-    
-    <form asp-action="Delete">
-        <input type="hidden" asp-for="Codigo" />
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
-    </form>
-</div>
+    .incident-delete-icon {
+        display: grid;
+        place-items: center;
+        width: 48px;
+        height: 48px;
+        margin-bottom: 17px;
+        border-radius: 14px;
+        background: #ffe4e8;
+        color: #b44a58;
+        font-size: 1.35rem;
+        font-weight: 900
+    }
+
+    .incident-delete-card h1 {
+        margin: 0 0 9px;
+        font-size: 1.7rem;
+        font-weight: 800;
+        letter-spacing: -.04em
+    }
+
+    .incident-delete-card p {
+        color: #718096;
+        line-height: 1.55
+    }
+
+    .incident-delete-summary {
+        margin: 20px 0;
+        padding: 16px;
+        border-radius: 11px;
+        background: #f8f9fc
+    }
+
+        .incident-delete-summary strong, .incident-delete-summary small {
+            display: block
+        }
+
+        .incident-delete-summary small {
+            margin-top: 5px;
+            color: #718096
+        }
+
+    .incident-delete-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding-top: 20px;
+        border-top: 1px solid #eef1f5
+    }
+
+    .incident-delete-button {
+        border: 0;
+        border-radius: 10px;
+        padding: 10px 17px;
+        background: #b44a58;
+        color: #fff;
+        font-weight: 750
+    }
+
+        .incident-delete-button:hover {
+            background: #963c49
+        }
+
+    .incident-back {
+        color: #718096;
+        font-weight: 700;
+        text-decoration: none
+    }
+
+        .incident-back:hover {
+            color: #5c5ce2
+        }
+</style>
+<div class="incident-delete-page"><div class="incident-delete-card"><div class="incident-delete-icon">!</div><h1>Excluir incidente?</h1><p>Essa ação removerá o registro da ocorrência. Confirme somente se você tiver certeza de que deseja continuar.</p><div class="incident-delete-summary"><strong>@problema</strong><small>Código #@Model.Codigo · @Model.DataIncidente</small></div><form asp-action="Delete"><input type="hidden" asp-for="Codigo" /><div class="incident-delete-actions"><button type="submit" class="incident-delete-button">Sim, excluir</button><a asp-action="Index" class="incident-back">Cancelar</a></div></form></div></div>
