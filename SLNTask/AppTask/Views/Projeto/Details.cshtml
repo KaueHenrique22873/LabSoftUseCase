@@ -1,42 +1,142 @@
 ﻿@model AppTask.Models.Projeto
-
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Detalhes do projeto"; var nome = string.IsNullOrWhiteSpace(Model.Nome) ? "Sem nome informado" : Model.Nome.Trim(); var descricao = string.IsNullOrWhiteSpace(Model.Descricao) ? "Sem descrição" : Model.Descricao.Trim();
 }
+<style>
+    .project-details-page {
+        max-width: 850px;
+        margin: 0 auto;
+        padding: 38px 0 58px;
+        color: #172033
+    }
 
-<h1>Details</h1>
+    .project-eyebrow {
+        color: #5c5ce2;
+        font-size: .74rem;
+        font-weight: 800;
+        letter-spacing: .13em;
+        text-transform: uppercase
+    }
 
-<div>
-    <h4>Projeto</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Nome)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Nome)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Descricao)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Descricao)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DataInicio)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DataInicio)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DataFim)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DataFim)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Codigo">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+    .project-details-page h1 {
+        margin: 7px 0 8px;
+        font-weight: 800;
+        letter-spacing: -.05em
+    }
+
+    .project-details-page > p {
+        margin-bottom: 24px;
+        color: #718096
+    }
+
+    .project-details-card {
+        padding: 28px;
+        border: 1px solid #e7ebf1;
+        border-radius: 18px;
+        background: #fff;
+        box-shadow: 0 10px 30px #212f4d0b
+    }
+
+    .project-profile {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding-bottom: 22px;
+        border-bottom: 1px solid #eef1f5
+    }
+
+    .project-profile-icon {
+        display: grid;
+        place-items: center;
+        width: 52px;
+        height: 52px;
+        border-radius: 15px;
+        background: #eeedff;
+        color: #5c5ce2;
+        font-size: 1.35rem;
+        font-weight: 850
+    }
+
+    .project-profile h2 {
+        margin: 0 0 4px;
+        font-size: 1.3rem
+    }
+
+    .project-profile span {
+        color: #718096;
+        font-size: .82rem
+    }
+
+    .project-detail-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 22px;
+        padding: 23px 0
+    }
+
+        .project-detail-grid .full {
+            grid-column: 1/-1
+        }
+
+        .project-detail-grid small {
+            display: block;
+            color: #718096;
+            font-size: .75rem;
+            font-weight: 800;
+            letter-spacing: .07em;
+            text-transform: uppercase
+        }
+
+        .project-detail-grid strong {
+            display: block;
+            margin-top: 7px;
+            line-height: 1.5
+        }
+
+    .project-details-actions {
+        display: flex;
+        gap: 12px;
+        padding-top: 20px;
+        border-top: 1px solid #eef1f5
+    }
+
+    .project-edit {
+        border-radius: 10px;
+        padding: 10px 17px;
+        background: #5c5ce2;
+        color: #fff;
+        font-weight: 750;
+        text-decoration: none
+    }
+
+        .project-edit:hover {
+            background: #4747bc;
+            color: #fff
+        }
+
+    .project-back {
+        align-self: center;
+        color: #718096;
+        font-weight: 700;
+        text-decoration: none
+    }
+
+        .project-back:hover {
+            color: #5c5ce2
+        }
+
+    @@media(max-width:560px) {
+        .project-detail-grid {
+            grid-template-columns: 1fr
+        }
+
+            .project-detail-grid .full {
+                grid-column: auto
+            }
+
+        .project-details-card {
+            padding: 21px
+        }
+    }
+</style>
+<div class="project-details-page"><div class="project-eyebrow">Planejamento e execução</div><h1>Detalhes do projeto</h1><p>Confira as informações e o período cadastrado para esta iniciativa.</p><div class="project-details-card"><div class="project-profile"><span class="project-profile-icon">@nome.Substring(0, 1).ToUpperInvariant()</span><div><h2>@nome</h2><span>Código #@Model.Codigo</span></div></div><div class="project-detail-grid"><div class="full"><small>Descrição</small><strong>@descricao</strong></div><div><small>Data de início</small><strong>@Model.DataInicio</strong></div><div><small>Data de término</small><strong>@Model.DataFim</strong></div></div><div class="project-details-actions"><a asp-action="Edit" asp-route-id="@Model.Codigo" class="project-edit">Editar projeto</a><a asp-action="Index" class="project-back">Voltar para lista</a></div></div></div>

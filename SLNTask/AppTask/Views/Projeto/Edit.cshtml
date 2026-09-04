@@ -1,49 +1,103 @@
 ﻿@model AppTask.Models.Projeto
-
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Editar projeto";
 }
+<style>
+    .project-form-page {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 38px 0 58px;
+        color: #172033
+    }
 
-<h1>Edit</h1>
+    .project-eyebrow {
+        color: #5c5ce2;
+        font-size: .74rem;
+        font-weight: 800;
+        letter-spacing: .13em;
+        text-transform: uppercase
+    }
 
-<h4>Projeto</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Codigo" />
-            <div class="form-group">
-                <label asp-for="Nome" class="control-label"></label>
-                <input asp-for="Nome" class="form-control" />
-                <span asp-validation-for="Nome" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Descricao" class="control-label"></label>
-                <input asp-for="Descricao" class="form-control" />
-                <span asp-validation-for="Descricao" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DataInicio" class="control-label"></label>
-                <input asp-for="DataInicio" class="form-control" />
-                <span asp-validation-for="DataInicio" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DataFim" class="control-label"></label>
-                <input asp-for="DataFim" class="form-control" />
-                <span asp-validation-for="DataFim" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
-    </div>
-</div>
+    .project-form-page h1 {
+        margin: 7px 0 8px;
+        font-weight: 800;
+        letter-spacing: -.05em
+    }
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+    .project-form-page > p {
+        margin-bottom: 24px;
+        color: #718096
+    }
 
+    .project-form-card {
+        padding: 26px;
+        border: 1px solid #e7ebf1;
+        border-radius: 18px;
+        background: #fff;
+        box-shadow: 0 10px 30px #212f4d0b
+    }
+
+        .project-form-card label {
+            margin-bottom: 7px;
+            font-weight: 750
+        }
+
+    .project-input {
+        border: 1px solid #e0e5ed;
+        border-radius: 10px;
+        padding: 11px 13px
+    }
+
+        .project-input:focus {
+            border-color: #5c5ce2;
+            outline: 0;
+            box-shadow: 0 0 0 3px #5c5ce21f
+        }
+
+    .project-form-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-top: 24px
+    }
+
+    .project-submit {
+        border: 0;
+        border-radius: 10px;
+        padding: 10px 18px;
+        background: #5c5ce2;
+        color: #fff;
+        font-weight: 750
+    }
+
+        .project-submit:hover {
+            background: #4747bc
+        }
+
+    .project-back {
+        color: #718096;
+        font-weight: 700;
+        text-decoration: none
+    }
+
+        .project-back:hover {
+            color: #5c5ce2
+        }
+
+    @@media(max-width:560px) {
+        .project-form-page {
+            padding-top: 27px
+        }
+
+        .project-form-card {
+            padding: 21px
+        }
+    }
+</style>
+<div class="project-form-page"><div class="project-eyebrow">Manutenção cadastral</div><h1>Editar projeto</h1><p>Atualize as informações e mantenha o cronograma correto.</p><div class="project-form-card"><form asp-action="Edit"><div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div><input type="hidden" asp-for="Codigo" /><div class="mb-3"><label asp-for="Nome" class="form-label">Nome do projeto</label><input asp-for="Nome" class="form-control project-input" autofocus /><span asp-validation-for="Nome" class="text-danger small"></span></div><div class="mb-3"><label asp-for="Descricao" class="form-label">Descrição</label><textarea asp-for="Descricao" class="form-control project-input" rows="3"></textarea><span asp-validation-for="Descricao" class="text-danger small"></span></div><div class="row"><div class="col-md-6 mb-3"><label asp-for="DataInicio" class="form-label">Data de início</label><input asp-for="DataInicio" class="form-control project-input" /><span asp-validation-for="DataInicio" class="text-danger small"></span></div><div class="col-md-6 mb-3"><label asp-for="DataFim" class="form-label">Data de término</label><input asp-for="DataFim" class="form-control project-input" /><span asp-validation-for="DataFim" class="text-danger small"></span></div></div><div class="project-form-actions"><button type="submit" class="btn project-submit">Salvar alterações</button><a asp-action="Index" class="project-back">Cancelar</a></div></form></div></div>
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
 }
