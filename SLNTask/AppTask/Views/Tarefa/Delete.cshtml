@@ -1,165 +1,248 @@
 ﻿@model AppTask.Models.Tarefa
-@*[cite: 1] *@
 
 @{
-    ViewData["Title"] = "Excluir Tarefa";
+    ViewData["Title"] = "Excluir tarefa";
+    var descricao = string.IsNullOrWhiteSpace(Model.Descricao) ? "Tarefa sem descrição" : Model.Descricao.Trim();
 }
 
 <style>
-    :root {
-        --danger: #B44A58;
-        --danger-hover: #963C49;
-        --danger-bg: #FFE4E8;
-        --text-main: #172033;
-        --text-sec: #718096;
-        --border: #E0E5ED;
-        --bg: #F6F7FB;
-        --card-bg: #FFFFFF;
+    .task-delete-page {
+        max-width: 820px;
+        margin: 0 auto;
+        padding: 45px 0 65px;
+        color: #172033;
     }
 
-    .delete-container {
-        font-family: 'Inter', sans-serif;
-        background: var(--bg);
-        padding: 58px 16px;
-        min-height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: flex-start;
+    .task-delete-card {
+        padding: 30px;
+        border: 1px solid #ffd5da;
+        border-radius: 18px;
+        background: #fff;
+        box-shadow: 0 10px 30px rgba(33, 47, 77, .06);
     }
 
-    .delete-wrapper {
-        width: 100%;
-        max-width: 520px;
+    .task-delete-icon {
+        display: grid;
+        place-items: center;
+        width: 50px;
+        height: 50px;
+        margin-bottom: 18px;
+        border-radius: 15px;
+        background: #ffe4e8;
+        color: #b44a58;
+        font-size: 1.4rem;
+        font-weight: 900;
     }
 
-    .card-alert {
-        background: var(--card-bg);
-        border-radius: 14px;
-        padding: 32px;
-        border: 1px solid #F5C6CB;
-        box-shadow: 0 8px 24px rgba(180,74,88,0.1);
-        text-align: center;
-    }
-
-    .alert-icon {
-        width: 64px;
-        height: 64px;
-        border-radius: 50%;
-        background: var(--danger-bg);
-        color: var(--danger);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-size: 2rem;
-        margin: 0 auto 20px auto;
-        font-weight: bold;
-    }
-
-    .alert-title {
-        font-size: 1.5rem;
+    .task-delete-eyebrow {
+        color: #b44a58;
+        font-size: .74rem;
         font-weight: 800;
-        color: var(--text-main);
-        margin: 0 0 8px 0;
-        letter-spacing: -0.02em;
+        letter-spacing: .13em;
+        text-transform: uppercase;
     }
 
-    .alert-desc {
-        color: var(--text-sec);
-        font-size: 0.95rem;
-        line-height: 1.5;
-        margin: 0 0 24px 0;
+    .task-delete-card h1 {
+        margin: 7px 0 9px;
+        font-size: clamp(1.9rem, 4vw, 2.5rem);
+        font-weight: 800;
+        letter-spacing: -.05em;
     }
 
-    .summary-box {
-        background: var(--bg);
-        border: 1px solid var(--border);
-        border-radius: 10px;
-        padding: 16px;
-        text-align: left;
-        margin-bottom: 32px;
+    .task-delete-description {
+        margin-bottom: 24px;
+        color: #718096;
+        line-height: 1.6;
     }
 
-        .summary-box strong {
-            display: block;
-            color: var(--text-main);
-            font-size: 1.1rem;
-            margin-bottom: 4px;
-        }
+    .task-summary {
+        margin-bottom: 24px;
+        padding: 20px;
+        border-radius: 13px;
+        background: #f8f9fc;
+    }
 
-        .summary-box span {
-            color: var(--text-sec);
-            font-size: 0.85rem;
-        }
+    .task-summary-title {
+        margin-bottom: 17px;
+        color: #172033;
+        font-size: 1.05rem;
+        font-weight: 800;
+    }
 
-    .actions {
+    .task-summary-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px 22px;
+    }
+
+    .task-summary-item.full {
+        grid-column: 1 / -1;
+    }
+
+    .task-summary-item small {
+        display: block;
+        color: #718096;
+        font-size: .72rem;
+        font-weight: 800;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+    }
+
+    .task-summary-item strong {
+        display: block;
+        margin-top: 5px;
+        color: #172033;
+        font-size: .92rem;
+        line-height: 1.45;
+        word-break: break-word;
+    }
+
+    .task-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        border-radius: 999px;
+        padding: 5px 10px;
+        background: #eeedff;
+        color: #5353bd;
+        font-size: .75rem;
+        font-weight: 800;
+    }
+
+    .task-actions {
         display: flex;
+        align-items: center;
         gap: 12px;
-        justify-content: center;
+        padding-top: 22px;
+        border-top: 1px solid #eef1f5;
     }
 
-    .btn-danger {
-        background: var(--danger);
-        color: white;
-        border: none;
+    .task-delete-button {
+        border: 0;
         border-radius: 10px;
-        padding: 12px 24px;
+        padding: 11px 18px;
+        background: #b44a58;
+        color: #fff;
+        font-weight: 750;
+        transition: transform .16s, background .16s;
+    }
+
+        .task-delete-button:hover {
+            background: #963c49;
+        }
+
+        .task-delete-button:active {
+            transform: scale(.97);
+        }
+
+    .task-back {
+        color: #718096;
         font-weight: 700;
-        font-size: 0.95rem;
-        cursor: pointer;
-        transition: background 0.2s;
-        box-shadow: 0 4px 12px rgba(180,74,88,0.2);
-    }
-
-        .btn-danger:hover {
-            background: var(--danger-hover);
-        }
-
-    .btn-cancel {
-        background: transparent;
-        color: var(--text-sec);
         text-decoration: none;
-        padding: 12px 16px;
-        font-weight: 600;
-        border-radius: 10px;
-        transition: background 0.2s;
     }
 
-        .btn-cancel:hover {
-            background: #F0F2F6;
-            color: var(--text-main);
+        .task-back:hover {
+            color: #5c5ce2;
         }
 
-    @@media (max-width: 560px) {
-        .actions {
+    @@media (max-width: 620px) {
+        .task-delete-page {
+            padding: 27px 0 44px;
+        }
+
+        .task-delete-card {
+            padding: 21px;
+        }
+
+        .task-summary-grid {
+            grid-template-columns: 1fr;
+            gap: 14px;
+        }
+
+        .task-summary-item.full {
+            grid-column: auto;
+        }
+
+        .task-actions {
+            align-items: stretch;
             flex-direction: column;
         }
 
-        .btn-danger, .btn-cancel {
+        .task-delete-button,
+        .task-back {
             width: 100%;
-            box-sizing: border-box;
+            text-align: center;
+        }
+    }
+
+    @@media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+            transition-duration: .01ms !important;
         }
     }
 </style>
 
-<div class="delete-container">
-    <div class="delete-wrapper">
-        <div class="card-alert">
-            <div class="alert-icon">!</div>
-            <h1 class="alert-title">Excluir registro?</h1>
-            <p class="alert-desc">Tem certeza que deseja remover esta tarefa? Esta ação não poderá ser desfeita e os dados serão perdidos.</p>
+<div class="task-delete-page">
+    <div class="task-delete-card">
+        <div class="task-delete-icon">!</div>
+        <div class="task-delete-eyebrow">Atenção necessária</div>
+        <h1>Excluir tarefa?</h1>
+        <p class="task-delete-description">
+            Essa ação removerá permanentemente o cadastro da tarefa.
+            Confirme somente se você tiver certeza de que deseja continuar.
+        </p>
 
-            <div class="summary-box">
-                <strong>@Html.DisplayFor(model => model.Descricao)</strong>
-                <span>Prazo: @Html.DisplayFor(model => model.Prazo) | Status: @Html.DisplayFor(model => model.StatusTarefa)</span>
-            </div>
-
-            <form asp-action="Delete">
-                <input type="hidden" asp-for="Codigo" />
-                <div class="actions">
-                    <a asp-action="Index" class="btn-cancel">Cancelar</a>
-                    <input type="submit" value="Sim, excluir" class="btn-danger" />
+        <div class="task-summary">
+            <div class="task-summary-title">Resumo da tarefa</div>
+            <div class="task-summary-grid">
+                <div class="task-summary-item full">
+                    <small>Descrição</small>
+                    <strong>@descricao</strong>
                 </div>
-            </form>
+
+                <div class="task-summary-item">
+                    <small>Data planejada</small>
+                    <strong>@Model.DataPlanejada</strong>
+                </div>
+
+                <div class="task-summary-item">
+                    <small>Prazo</small>
+                    <strong>@Model.Prazo</strong>
+                </div>
+
+                <div class="task-summary-item">
+                    <small>Data iniciada</small>
+                    <strong>@Model.DataIniciada</strong>
+                </div>
+
+                <div class="task-summary-item">
+                    <small>Data finalizada</small>
+                    <strong>@Model.DataFinalizada</strong>
+                </div>
+
+                <div class="task-summary-item">
+                    <small>Data cancelada</small>
+                    <strong>@Model.DataCancelada</strong>
+                </div>
+
+                <div class="task-summary-item">
+                    <small>Status</small>
+                    <strong><span class="task-status">@Model.StatusTarefa</span></strong>
+                </div>
+
+                <div class="task-summary-item">
+                    <small>Funcionário</small>
+                    <strong>@(Model.Funcionario?.Codigo.ToString() ?? "Não atribuído")</strong>
+                </div>
+            </div>
         </div>
+
+        <form asp-action="Delete">
+            <input type="hidden" asp-for="Codigo" />
+            <div class="task-actions">
+                <button type="submit" class="task-delete-button">Sim, excluir tarefa</button>
+                <a asp-action="Index" class="task-back">Cancelar e voltar</a>
+            </div>
+        </form>
     </div>
 </div>

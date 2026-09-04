@@ -1,219 +1,310 @@
 ﻿@model AppTask.Models.Tarefa
-@*[cite: 1] *@
 
 @{
-    ViewData["Title"] = "Detalhes";
+    ViewData["Title"] = "Detalhes da tarefa";
+    var descricao = string.IsNullOrWhiteSpace(Model.Descricao) ? "Tarefa sem descrição" : Model.Descricao.Trim();
+    var status = string.IsNullOrWhiteSpace(Model.StatusTarefa) ? "Não informado" : Model.StatusTarefa.Trim();
 }
 
 <style>
-    :root {
-        --primary: #5C5CE2;
-        --text-main: #172033;
-        --text-sec: #718096;
-        --border: #E0E5ED;
-        --bg: #F6F7FB;
-        --card-bg: #FFFFFF;
+    .task-details-page {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 38px 0 58px;
+        color: #172033;
     }
 
-    .details-container {
-        font-family: 'Inter', sans-serif;
-        background: var(--bg);
-        padding: 58px 16px;
-        min-height: 100vh;
-        color: var(--text-main);
-        display: flex;
-        justify-content: center;
-    }
-
-    .details-wrapper {
-        width: 100%;
-        max-width: 800px;
-    }
-
-    .card {
-        background: var(--card-bg);
-        border-radius: 14px;
-        padding: 40px;
-        border: 1px solid var(--border);
-        box-shadow: 0 4px 20px rgba(0,0,0,0.03);
-    }
-
-    .card-header {
-        display: flex;
-        align-items: center;
-        gap: 20px;
-        padding-bottom: 24px;
-        border-bottom: 1px solid var(--border);
-        margin-bottom: 24px;
-    }
-
-    .avatar {
-        width: 64px;
-        height: 64px;
-        border-radius: 14px;
-        background: #EEEDFF;
-        color: var(--primary);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-size: 1.8rem;
+    .task-eyebrow {
+        color: #5c5ce2;
+        font-size: .74rem;
         font-weight: 800;
-    }
-
-    .title-group h1 {
-        margin: 0 0 4px 0;
-        font-size: 1.6rem;
-        font-weight: 800;
-        letter-spacing: -0.02em;
-    }
-
-    .code-id {
-        color: var(--text-sec);
-        font-size: 0.9rem;
-        font-weight: 500;
-        margin: 0;
-    }
-
-    .data-grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 24px 16px;
-    }
-
-    .data-item {
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-    }
-
-    .data-label {
-        font-size: 0.75rem;
+        letter-spacing: .13em;
         text-transform: uppercase;
-        color: var(--text-sec);
-        font-weight: 700;
-        letter-spacing: 0.05em;
     }
 
-    .data-value {
-        font-weight: 700;
-        font-size: 1rem;
-        color: var(--text-main);
+    .task-details-page h1 {
+        margin: 7px 0 8px;
+        font-size: clamp(2rem, 4vw, 2.8rem);
+        font-weight: 800;
+        letter-spacing: -.055em;
+        line-height: 1;
     }
 
-    .actions {
+    .task-subtitle {
+        margin-bottom: 25px;
+        color: #718096;
+    }
+
+    .task-details-card {
+        padding: 28px;
+        border: 1px solid #e7ebf1;
+        border-radius: 18px;
+        background: #fff;
+        box-shadow: 0 10px 30px rgba(33, 47, 77, .06);
+    }
+
+    .task-details-header {
         display: flex;
-        gap: 16px;
-        margin-top: 40px;
-        padding-top: 24px;
-        border-top: 1px solid var(--border);
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 18px;
+        padding-bottom: 22px;
+        border-bottom: 1px solid #eef1f5;
     }
 
-    .btn-primary {
-        background: var(--primary);
-        color: white;
-        border: none;
+    .task-details-icon {
+        display: grid;
+        place-items: center;
+        width: 52px;
+        height: 52px;
+        margin-bottom: 13px;
+        border-radius: 15px;
+        background: #eeedff;
+        color: #5c5ce2;
+        font-size: 1.35rem;
+        font-weight: 850;
+    }
+
+    .task-details-header h2 {
+        margin: 0 0 6px;
+        font-size: 1.35rem;
+        line-height: 1.35;
+    }
+
+    .task-code {
+        color: #718096;
+        font-size: .82rem;
+    }
+
+    .task-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        border-radius: 999px;
+        padding: 7px 11px;
+        background: #eeedff;
+        color: #5353bd;
+        font-size: .75rem;
+        font-weight: 800;
+        white-space: nowrap;
+    }
+
+        .task-status::before {
+            content: "";
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+    .task-details-section-title {
+        margin: 25px 0 17px;
+        color: #172033;
+        font-size: 1.03rem;
+        font-weight: 800;
+    }
+
+    .task-details-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px 24px;
+    }
+
+    .task-detail-item.full {
+        grid-column: 1 / -1;
+    }
+
+    .task-detail-item small {
+        display: block;
+        color: #718096;
+        font-size: .72rem;
+        font-weight: 800;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+    }
+
+    .task-detail-item strong {
+        display: block;
+        margin-top: 6px;
+        color: #172033;
+        font-size: .94rem;
+        line-height: 1.5;
+        word-break: break-word;
+    }
+
+        .task-detail-item strong.empty-value {
+            color: #a0aabd;
+            font-weight: 500;
+        }
+
+    .task-details-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-top: 27px;
+        padding-top: 22px;
+        border-top: 1px solid #eef1f5;
+    }
+
+    .task-edit {
         border-radius: 10px;
-        padding: 12px 24px;
+        padding: 10px 18px;
+        background: #5c5ce2;
+        color: #fff;
         font-weight: 750;
         text-decoration: none;
-        display: inline-block;
-        transition: all 0.2s;
-        box-shadow: 0 4px 12px rgba(92,92,226,0.15);
+        box-shadow: 0 8px 17px rgba(92, 92, 226, .18);
     }
 
-        .btn-primary:hover {
-            background: #4747BC;
-            transform: translateY(-2px);
+        .task-edit:hover {
+            background: #4747bc;
+            color: #fff;
         }
 
-    .btn-secondary {
-        background: white;
-        color: var(--text-main);
-        border: 1px solid var(--border);
-        border-radius: 10px;
-        padding: 12px 24px;
-        font-weight: 600;
+    .task-back {
+        color: #718096;
+        font-weight: 700;
         text-decoration: none;
-        transition: background 0.2s;
     }
 
-        .btn-secondary:hover {
-            background: #F6F7FB;
+        .task-back:hover {
+            color: #5c5ce2;
         }
 
-    @@media (max-width: 560px) {
-        .card {
-            padding: 24px;
+    @@media (max-width: 640px) {
+        .task-details-page {
+            padding: 27px 0 44px;
         }
 
-        .data-grid {
-            grid-template-columns: 1fr;
+        .task-details-card {
+            padding: 21px;
         }
 
-        .actions {
+        .task-details-header {
+            align-items: flex-start;
             flex-direction: column;
         }
 
-        .btn-primary, .btn-secondary {
-            text-align: center;
+        .task-details-grid {
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+
+        .task-detail-item.full {
+            grid-column: auto;
+        }
+
+        .task-details-actions {
+            align-items: stretch;
+            flex-direction: column;
+        }
+
+        .task-edit,
+        .task-back {
             width: 100%;
-            box-sizing: border-box;
+            text-align: center;
+        }
+    }
+
+    @@media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+            transition-duration: .01ms !important;
         }
     }
 </style>
 
-<div class="details-container">
-    <div class="details-wrapper">
-        <div class="card">
-            <div class="card-header">
-                <div class="avatar">
-                    @if (!string.IsNullOrEmpty(Model.Descricao))
-                    {
-                        @Model.Descricao.Substring(0, 1).ToUpper()
-                    }
-                    else
-                    {
+<div class="task-details-page">
+    <div class="task-eyebrow">Gestão de tarefas</div>
+    <h1>Detalhes da tarefa</h1>
+    <p class="task-subtitle">Acompanhe as informações, os prazos e o responsável por esta tarefa.</p>
 
-                        <text>T</text>
-                    }
-                </div>
-                <div class="title-group">
-                    <h1>@Html.DisplayFor(model => model.Descricao)</h1>
-                    <p class="code-id">Código: #@Model.Codigo</p>
-                </div>
+    <div class="task-details-card">
+        <div class="task-details-header">
+            <div>
+                <div class="task-details-icon">✓</div>
+                <h2>@descricao</h2>
+                <span class="task-code">Código #@Model.Codigo</span>
+            </div>
+            <span class="task-status">@status</span>
+        </div>
+
+        <h3 class="task-details-section-title">Informações e acompanhamento</h3>
+
+        <div class="task-details-grid">
+            <div class="task-detail-item full">
+                <small>Descrição</small>
+                <strong>@descricao</strong>
             </div>
 
-            <div class="data-grid">
-                <div class="data-item">
-                    <span class="data-label">@Html.DisplayNameFor(model => model.DataPlanejada)</span>
-                    <span class="data-value">@Html.DisplayFor(model => model.DataPlanejada)</span>
-                </div>
-                <div class="data-item">
-                    <span class="data-label">@Html.DisplayNameFor(model => model.Prazo)</span>
-                    <span class="data-value">@Html.DisplayFor(model => model.Prazo)</span>
-                </div>
-                <div class="data-item">
-                    <span class="data-label">@Html.DisplayNameFor(model => model.DataIniciada)</span>
-                    <span class="data-value">@Html.DisplayFor(model => model.DataIniciada)</span>
-                </div>
-                <div class="data-item">
-                    <span class="data-label">@Html.DisplayNameFor(model => model.DataFinalizada)</span>
-                    <span class="data-value">@Html.DisplayFor(model => model.DataFinalizada)</span>
-                </div>
-                <div class="data-item">
-                    <span class="data-label">@Html.DisplayNameFor(model => model.StatusTarefa)</span>
-                    <span class="data-value">@Html.DisplayFor(model => model.StatusTarefa)</span>
-                </div>
-                <div class="data-item">
-                    <span class="data-label">@Html.DisplayNameFor(model => model.Funcionario)</span>
-                    <span class="data-value">@Html.DisplayFor(model => model.Funcionario.Codigo)</span>
-                </div>
+            <div class="task-detail-item">
+                <small>Data planejada</small>
+                @if (Model.DataPlanejada == null)
+                {
+                    <strong class="empty-value">Não informada</strong>
+                }
+                else
+                {
+                    <strong>@Model.DataPlanejada</strong>
+                }
             </div>
 
-            <div class="actions">
-                <a asp-action="Edit" asp-route-id="@Model?.Codigo" class="btn-primary">Editar Tarefa</a>
-                <a asp-action="Index" class="btn-secondary">Voltar à Listagem</a>
+            <div class="task-detail-item">
+                <small>Prazo</small>
+                @if (Model.Prazo == null)
+                {
+                    <strong class="empty-value">Não informado</strong>
+                }
+                else
+                {
+                    <strong>@Model.Prazo</strong>
+                }
             </div>
+
+            <div class="task-detail-item">
+                <small>Data de início</small>
+                @if (Model.DataIniciada == null)
+                {
+                    <strong class="empty-value">Ainda não iniciada</strong>
+                }
+                else
+                {
+                    <strong>@Model.DataIniciada</strong>
+                }
+            </div>
+
+            <div class="task-detail-item">
+                <small>Data de finalização</small>
+                @if (Model.DataFinalizada == null)
+                {
+                    <strong class="empty-value">Ainda não finalizada</strong>
+                }
+                else
+                {
+                    <strong>@Model.DataFinalizada</strong>
+                }
+            </div>
+
+            <div class="task-detail-item">
+                <small>Data de cancelamento</small>
+                @if (Model.DataCancelada == null)
+                {
+                    <strong class="empty-value">Não cancelada</strong>
+                }
+                else
+                {
+                    <strong>@Model.DataCancelada</strong>
+                }
+            </div>
+
+            <div class="task-detail-item">
+                <small>Funcionário responsável</small>
+                <strong>@(Model.Funcionario?.Codigo.ToString() ?? "Não atribuído")</strong>
+            </div>
+        </div>
+
+        <div class="task-details-actions">
+            <a asp-action="Edit" asp-route-id="@Model?.Codigo" class="task-edit">Editar tarefa</a>
+            <a asp-action="Index" class="task-back">Voltar para lista</a>
         </div>
     </div>
 </div>
