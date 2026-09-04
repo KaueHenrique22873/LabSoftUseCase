@@ -19,6 +19,10 @@ public partial class DbTasksContext : DbContext
 
     public virtual DbSet<Funcionario> Funcionarios { get; set; }
 
+    public virtual DbSet<Incidente> Incidentes { get; set; }
+
+    public virtual DbSet<Projeto> Projetos { get; set; }
+
     public virtual DbSet<Tarefa> Tarefas { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -28,21 +32,19 @@ public partial class DbTasksContext : DbContext
     {
         modelBuilder.Entity<Departamento>(entity =>
         {
-            entity.HasKey(e => e.Codigo).HasName("PK__Departam__06370DAD73904FE2");
+            entity.HasKey(e => e.Codigo).HasName("PK__Departam__06370DADFFA87E78");
 
             entity.ToTable("Departamento");
 
-            entity.Property(e => e.Nome)
-                .HasMaxLength(100)
-                .IsUnicode(false);
-            entity.Property(e => e.Sigla)
-                .HasMaxLength(10)
+            entity.Property(e => e.Ativo).HasDefaultValue(true);
+            entity.Property(e => e.Descricao)
+                .HasMaxLength(250)
                 .IsUnicode(false);
         });
 
         modelBuilder.Entity<Funcionario>(entity =>
         {
-            entity.HasKey(e => e.Codigo).HasName("PK__Funciona__06370DAD8DE01473");
+            entity.HasKey(e => e.Codigo).HasName("PK__Funciona__06370DAD0A151EF7");
 
             entity.ToTable("Funcionario");
 
@@ -52,16 +54,45 @@ public partial class DbTasksContext : DbContext
             entity.Property(e => e.Nome)
                 .HasMaxLength(100)
                 .IsUnicode(false);
+        });
 
-            entity.HasOne(d => d.Departamento).WithMany(p => p.Funcionarios)
-                .HasForeignKey(d => d.DepartamentoId)
+        modelBuilder.Entity<Incidente>(entity =>
+        {
+            entity.HasKey(e => e.Codigo).HasName("PK__Incident__06370DADF587B974");
+
+            entity.ToTable("Incidente");
+
+            entity.Property(e => e.DataIncidente).HasColumnType("datetime");
+            entity.Property(e => e.DescricaoProblema)
+                .HasMaxLength(250)
+                .IsUnicode(false);
+            entity.Property(e => e.Solucao)
+                .HasMaxLength(250)
+                .IsUnicode(false);
+
+            entity.HasOne(d => d.Funcionario).WithMany(p => p.Incidentes)
+                .HasForeignKey(d => d.FuncionarioId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Funcionario_Departamento");
+                .HasConstraintName("FK_Incidente_Funcionario");
+        });
+
+        modelBuilder.Entity<Projeto>(entity =>
+        {
+            entity.HasKey(e => e.Codigo).HasName("PK__Projetos__06370DAD0667F83B");
+
+            entity.Property(e => e.DataFim).HasColumnType("datetime");
+            entity.Property(e => e.DataInicio).HasColumnType("datetime");
+            entity.Property(e => e.Descricao)
+                .HasMaxLength(250)
+                .IsUnicode(false);
+            entity.Property(e => e.Nome)
+                .HasMaxLength(100)
+                .IsUnicode(false);
         });
 
         modelBuilder.Entity<Tarefa>(entity =>
         {
-            entity.HasKey(e => e.Codigo).HasName("PK__Tarefa__06370DAD1D29753C");
+            entity.HasKey(e => e.Codigo).HasName("PK__Tarefa__06370DAD7EAD9579");
 
             entity.ToTable("Tarefa");
 
