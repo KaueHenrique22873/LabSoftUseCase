@@ -159,5 +159,10 @@ namespace AppTask.Controllers
         {
             return _context.Tarefas.Any(e => e.Codigo == id);
         }
+        public IActionResult Sobre()
+        {
+            return View();
+        }
+
     }
 }
