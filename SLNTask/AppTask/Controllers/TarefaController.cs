@@ -24,13 +24,6 @@ namespace AppTask.Controllers
             var dbTasksContext = _context.Tarefas.Include(t => t.Funcionario);
             return View(await dbTasksContext.ToListAsync());
         }
-        public async Task<IActionResult> Sobre()
-        {
-
-            return View();
-        }
-
-      
 
         // GET: Tarefa/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -54,8 +47,7 @@ namespace AppTask.Controllers
         // GET: Tarefa/Create
         public IActionResult Create()
         {
-            ViewData["ListaFuncionario"] = new SelectList(_context.Funcionarios, "Codigo", "Nome");
-
+            ViewData["FuncionarioId"] = new SelectList(_context.Funcionarios, "Codigo", "Codigo");
             return View();
         }
 
@@ -72,9 +64,7 @@ namespace AppTask.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-
-            ViewData["FuncionarioId"] = new SelectList(_context.Funcionarios, "Codigo", "Nome", tarefa.FuncionarioId);
-
+            ViewData["FuncionarioId"] = new SelectList(_context.Funcionarios, "Codigo", "Codigo", tarefa.FuncionarioId);
             return View(tarefa);
         }
 
@@ -91,7 +81,7 @@ namespace AppTask.Controllers
             {
                 return NotFound();
             }
-            ViewData["FuncionarioId"] = new SelectList(_context.Funcionarios, "Codigo", "Nome", tarefa.FuncionarioId);
+            ViewData["FuncionarioId"] = new SelectList(_context.Funcionarios, "Codigo", "Codigo", tarefa.FuncionarioId);
             return View(tarefa);
         }
 
@@ -127,7 +117,7 @@ namespace AppTask.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["FuncionarioId"] = new SelectList(_context.Funcionarios, "Codigo", "Nome", tarefa.FuncionarioId);
+            ViewData["FuncionarioId"] = new SelectList(_context.Funcionarios, "Codigo", "Codigo", tarefa.FuncionarioId);
             return View(tarefa);
         }
 
