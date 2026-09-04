@@ -1,30 +1,174 @@
 ﻿@model AppTask.Models.Departamento
-
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Detalhes do departamento";
 }
 
-<h1>Details</h1>
+<style>
+    .department-details-page {
+        max-width: 820px;
+        margin: 0 auto;
+        padding: 38px 0 58px;
+        color: #172033;
+    }
 
-<div>
-    <h4>Departamento</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Descricao)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Descricao)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Ativo)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Ativo)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Codigo">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    .department-details-eyebrow {
+        color: #5c5ce2;
+        font-size: .74rem;
+        font-weight: 800;
+        letter-spacing: .13em;
+        text-transform: uppercase;
+    }
+
+    .department-details-page h1 {
+        margin: 7px 0 8px;
+        font-weight: 800;
+        letter-spacing: -.05em;
+    }
+
+    .department-details-subtitle {
+        color: #718096;
+        margin-bottom: 24px;
+    }
+
+    .department-details-card {
+        padding: 28px;
+        border: 1px solid #e7ebf1;
+        border-radius: 18px;
+        background: #fff;
+        box-shadow: 0 10px 30px rgba(33,47,77,.05);
+    }
+
+    .department-details-top {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding-bottom: 22px;
+        border-bottom: 1px solid #eef1f5;
+    }
+
+    .department-details-icon {
+        display: grid;
+        place-items: center;
+        width: 52px;
+        height: 52px;
+        border-radius: 15px;
+        background: #eeedff;
+        color: #5c5ce2;
+        font-size: 1.35rem;
+        font-weight: 850;
+    }
+
+    .department-details-top h2 {
+        margin: 0 0 4px;
+        font-size: 1.3rem;
+    }
+
+    .department-details-code {
+        color: #718096;
+        font-size: .82rem;
+    }
+
+    .department-details-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        padding: 23px 0;
+    }
+
+    .department-detail-label {
+        display: block;
+        color: #718096;
+        font-size: .75rem;
+        font-weight: 800;
+        letter-spacing: .07em;
+        text-transform: uppercase;
+    }
+
+    .department-detail-value {
+        display: block;
+        margin-top: 7px;
+        font-size: 1rem;
+        font-weight: 700;
+    }
+
+    .department-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        border-radius: 999px;
+        padding: 6px 10px;
+        font-size: .75rem;
+        font-weight: 800;
+    }
+
+        .department-status::before {
+            content: "";
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        .department-status.active {
+            background: #def6ec;
+            color: #24815e;
+        }
+
+        .department-status.inactive {
+            background: #ffe4e8;
+            color: #b44a58;
+        }
+
+    .department-details-actions {
+        display: flex;
+        gap: 10px;
+        padding-top: 20px;
+        border-top: 1px solid #eef1f5;
+    }
+
+    .department-edit {
+        border: 0;
+        border-radius: 10px;
+        padding: 10px 17px;
+        background: #5c5ce2;
+        color: #fff;
+        font-weight: 750;
+        text-decoration: none;
+    }
+
+        .department-edit:hover {
+            background: #4747bc;
+            color: #fff;
+        }
+
+    .department-back {
+        align-self: center;
+        color: #718096;
+        font-weight: 700;
+        text-decoration: none;
+    }
+
+    @@media (max-width: 560px) {
+        .department-details-grid {
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+    }
+</style>
+
+<div class="department-details-page">
+    <div class="department-details-eyebrow">Cadastro de departamento</div>
+    <h1>Detalhes</h1>
+    <p class="department-details-subtitle">Confira as informações cadastradas para este departamento.</p>
+    <div class="department-details-card">
+        <div class="department-details-top">
+            <div class="department-details-icon">@(string.IsNullOrWhiteSpace(Model.Descricao) ? "D" : Model.Descricao.Substring(0, 1).ToUpperInvariant())</div>
+            <div><h2>@(Model.Descricao ?? "Sem descrição")</h2><span class="department-details-code">Código #@Model.Codigo</span></div>
+        </div>
+        <div class="department-details-grid">
+            <div><span class="department-detail-label">Descrição</span><span class="department-detail-value">@(Model.Descricao ?? "Sem descrição")</span></div>
+            <div><span class="department-detail-label">Status atual</span><span class="department-status @(Model.Ativo == true ? "active" : "inactive")">@(Model.Ativo == true ? "Ativo" : "Inativo")</span></div>
+        </div>
+        <div class="department-details-actions"><a asp-action="Edit" asp-route-id="@Model.Codigo" class="department-edit">Editar departamento</a><a asp-action="Index" class="department-back">Voltar para lista</a></div>
+    </div>
 </div>

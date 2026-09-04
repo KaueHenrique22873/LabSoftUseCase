@@ -1,39 +1,119 @@
 ﻿@model AppTask.Models.Departamento
-
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Editar departamento";
 }
 
-<h1>Edit</h1>
+<style>
+    .department-form-page {
+        max-width: 760px;
+        margin: 0 auto;
+        padding: 38px 0 58px;
+        color: #172033;
+    }
 
-<h4>Departamento</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
+    .department-form-eyebrow {
+        color: #5c5ce2;
+        font-size: .74rem;
+        font-weight: 800;
+        letter-spacing: .13em;
+        text-transform: uppercase;
+    }
+
+    .department-form-page h1 {
+        margin: 7px 0 8px;
+        font-weight: 800;
+        letter-spacing: -.05em;
+    }
+
+    .department-form-subtitle {
+        color: #718096;
+        margin-bottom: 24px;
+    }
+
+    .department-form-card {
+        padding: 26px;
+        border: 1px solid #e7ebf1;
+        border-radius: 18px;
+        background: #fff;
+        box-shadow: 0 10px 30px rgba(33,47,77,.05);
+    }
+
+        .department-form-card label {
+            margin-bottom: 7px;
+            font-weight: 750;
+        }
+
+        .department-form-card .form-control {
+            border-color: #e0e5ed;
+            border-radius: 10px;
+            padding: 11px 13px;
+        }
+
+            .department-form-card .form-control:focus {
+                border-color: #5c5ce2;
+                box-shadow: 0 0 0 3px rgba(92,92,226,.12);
+            }
+
+    .department-form-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-top: 24px;
+    }
+
+    .department-submit {
+        border: 0;
+        border-radius: 10px;
+        padding: 10px 18px;
+        background: #5c5ce2;
+        color: #fff;
+        font-weight: 750;
+    }
+
+        .department-submit:hover {
+            background: #4747bc;
+            color: #fff;
+        }
+
+    .department-back {
+        color: #718096;
+        font-weight: 700;
+        text-decoration: none;
+    }
+</style>
+
+<div class="department-form-page">
+    <div class="department-form-eyebrow">Manutenção cadastral</div>
+    <h1>Editar departamento</h1>
+    <p class="department-form-subtitle">Atualize os dados e mantenha o cadastro sempre correto.</p>
+    <div class="department-form-card">
         <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
             <input type="hidden" asp-for="Codigo" />
-            <div class="form-group">
-                <label asp-for="Descricao" class="control-label"></label>
-                <input asp-for="Descricao" class="form-control" />
-                <span asp-validation-for="Descricao" class="text-danger"></span>
+            <div class="mb-3">
+                <label asp-for="Descricao" class="form-label">Nome do departamento</label>
+                <input asp-for="Descricao" class="form-control" autofocus />
+                <span asp-validation-for="Descricao" class="text-danger small"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Ativo" class="control-label"></label>
-                <input asp-for="Ativo" class="form-control" />
-                <span asp-validation-for="Ativo" class="text-danger"></span>
+            <div class="mb-3">
+                <label asp-for="Ativo" class="form-label">Status</label>
+                <select asp-for="Ativo" class="form-select">
+                    <option value="true">Ativo</option>
+                    <option value="false">Inativo</option>
+                </select>
+                <span asp-validation-for="Ativo" class="text-danger small"></span>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+            <div class="department-form-actions">
+                <button type="submit" class="btn department-submit">Salvar alterações</button>
+                <a asp-action="Index" class="department-back">Cancelar</a>
             </div>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
 }

@@ -1,41 +1,342 @@
 ﻿@model IEnumerable<AppTask.Models.Departamento>
-
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Departamentos"; var departamentos = Model ?? Enumerable.Empty<AppTask.Models.Departamento>(); var total = departamentos.Count(); var ativos = departamentos.Count(d => d.Ativo == true);
 }
 
-<h1>Index</h1>
+<style>
+    .departments-page {
+        padding: 36px 0 58px;
+        color: #172033;
+    }
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Descricao)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Ativo)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Descricao)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Ativo)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Codigo">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Codigo">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Codigo">Delete</a>
-            </td>
-        </tr>
+    .departments-hero {
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 24px;
+        margin-bottom: 28px;
+    }
+
+    .departments-eyebrow {
+        color: #5c5ce2;
+        font-size: .74rem;
+        font-weight: 800;
+        letter-spacing: .13em;
+        text-transform: uppercase;
+    }
+
+    .departments-hero h1 {
+        margin: 7px 0 8px;
+        font-size: clamp(2rem, 4vw, 3rem);
+        font-weight: 800;
+        letter-spacing: -.055em;
+        line-height: 1;
+    }
+
+    .departments-hero p {
+        margin: 0;
+        color: #718096;
+    }
+
+    .department-primary-btn {
+        border: 0;
+        border-radius: 11px;
+        padding: 11px 17px;
+        background: #5c5ce2;
+        color: #fff;
+        font-weight: 750;
+        box-shadow: 0 9px 20px rgba(92,92,226,.2);
+    }
+
+        .department-primary-btn:hover {
+            background: #4747bc;
+            color: #fff;
+        }
+
+    .department-stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+
+    .department-stat, .department-panel {
+        border: 1px solid #e7ebf1;
+        border-radius: 18px;
+        background: #fff;
+        box-shadow: 0 10px 30px rgba(33,47,77,.045);
+    }
+
+    .department-stat {
+        padding: 18px 20px;
+    }
+
+    .department-stat-label {
+        color: #718096;
+        font-size: .8rem;
+        font-weight: 700;
+    }
+
+    .department-stat-value {
+        margin-top: 8px;
+        font-size: 1.9rem;
+        font-weight: 800;
+        letter-spacing: -.05em;
+    }
+
+    .department-stat-helper {
+        color: #718096;
+        font-size: .75rem;
+    }
+
+    .department-panel {
+        padding: 22px;
+    }
+
+    .department-toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+        margin-bottom: 18px;
+    }
+
+        .department-toolbar h2 {
+            margin: 0;
+            font-size: 1.08rem;
+        }
+
+        .department-toolbar small {
+            color: #718096;
+        }
+
+    .department-controls {
+        display: flex;
+        gap: 10px;
+    }
+
+    .department-search, .department-filter {
+        border: 1px solid #e0e5ed;
+        border-radius: 10px;
+        padding: 9px 12px;
+        color: #172033;
+        background: #fff;
+    }
+
+    .department-search {
+        min-width: 235px;
+    }
+
+        .department-search:focus, .department-filter:focus {
+            border-color: #5c5ce2;
+            outline: 0;
+            box-shadow: 0 0 0 3px rgba(92,92,226,.12);
+        }
+
+    .department-table-wrap {
+        overflow-x: auto;
+    }
+
+    .department-table {
+        width: 100%;
+        min-width: 620px;
+        margin: 0;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+        .department-table th {
+            padding: 12px 13px;
+            border-bottom: 1px solid #e7ebf1;
+            color: #718096;
+            font-size: .72rem;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+        }
+
+        .department-table td {
+            padding: 15px 13px;
+            border-bottom: 1px solid #f0f2f6;
+            vertical-align: middle;
+        }
+
+        .department-table tbody tr:hover {
+            background: #fafaff;
+        }
+
+    .department-name {
+        display: flex;
+        align-items: center;
+        gap: 11px;
+        font-weight: 750;
+    }
+
+    .department-icon {
+        display: grid;
+        place-items: center;
+        width: 36px;
+        height: 36px;
+        border-radius: 11px;
+        background: #eeedff;
+        color: #5c5ce2;
+        font-weight: 850;
+    }
+
+    .department-code {
+        color: #718096;
+        font-size: .78rem;
+        font-weight: 500;
+    }
+
+    .department-status {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        border-radius: 999px;
+        padding: 5px 9px;
+        font-size: .7rem;
+        font-weight: 800;
+    }
+
+        .department-status::before {
+            content: "";
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+        }
+
+        .department-status.active {
+            background: #def6ec;
+            color: #24815e;
+        }
+
+        .department-status.inactive {
+            background: #ffe4e8;
+            color: #b44a58;
+        }
+
+    .department-actions {
+        display: flex;
+        justify-content: end;
+        gap: 5px;
+        white-space: nowrap;
+    }
+
+    .department-action {
+        border-radius: 8px;
+        padding: 6px 9px;
+        color: #718096;
+        font-size: .78rem;
+        font-weight: 700;
+        text-decoration: none;
+    }
+
+        .department-action:hover {
+            color: #5c5ce2;
+            background: #f0efff;
+        }
+
+        .department-action.delete:hover {
+            color: #b44a58;
+            background: #ffe4e8;
+        }
+
+    .department-empty {
+        display: none;
+        padding: 36px 20px;
+        color: #718096;
+        text-align: center;
+    }
+
+        .department-empty strong {
+            display: block;
+            margin-bottom: 5px;
+            color: #172033;
+        }
+
+    @@media (max-width: 820px) {
+        .departments-hero {
+            align-items: start;
+            flex-direction: column;
+        }
+
+        .department-primary-btn {
+            width: 100%;
+        }
+
+        .department-toolbar {
+            align-items: start;
+            flex-direction: column;
+        }
+
+        .department-controls {
+            width: 100%;
+        }
+
+        .department-search {
+            flex: 1;
+            min-width: 0;
+        }
+    }
+
+    @@media (max-width: 560px) {
+        .departments-page {
+            padding: 27px 0 44px;
+        }
+
+        .department-stats {
+            gap: 9px;
+        }
+
+        .department-stat {
+            padding: 14px;
+        }
+
+        .department-stat-value {
+            font-size: 1.5rem;
+        }
+
+        .department-controls {
+            align-items: stretch;
+            flex-direction: column;
+        }
+
+        .department-search {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="departments-page">
+    <section class="departments-hero" aria-labelledby="departments-title">
+        <div><div class="departments-eyebrow">Organização da equipe</div><h1 id="departments-title">Departamentos</h1><p>Centralize áreas, responsáveis e status para manter a operação organizada.</p></div>
+        <a asp-action="Create" class="btn department-primary-btn">+ Novo departamento</a>
+    </section>
+    <section class="department-stats" aria-label="Resumo dos departamentos">
+        <article class="department-stat"><div class="department-stat-label">Total de departamentos</div><div class="department-stat-value">@total</div><div class="department-stat-helper">Cadastrados no sistema</div></article>
+        <article class="department-stat"><div class="department-stat-label">Departamentos ativos</div><div class="department-stat-value">@ativos</div><div class="department-stat-helper">Disponíveis para operação</div></article>
+        <article class="department-stat"><div class="department-stat-label">Departamentos inativos</div><div class="department-stat-value">@(total - ativos)</div><div class="department-stat-helper">Precisam de revisão</div></article>
+    </section>
+    <section class="department-panel" aria-labelledby="list-title">
+        <div class="department-toolbar"><div><h2 id="list-title">Lista de departamentos</h2><small>Consulte e gerencie os setores cadastrados.</small></div><div class="department-controls"><label class="visually-hidden" for="departmentSearch">Buscar departamento</label><input id="departmentSearch" class="department-search" type="search" placeholder="Buscar por nome..." autocomplete="off" /><label class="visually-hidden" for="departmentStatus">Filtrar por status</label><select id="departmentStatus" class="department-filter"><option value="all">Todos</option><option value="active">Ativos</option><option value="inactive">Inativos</option></select></div></div>
+        <div class="department-table-wrap">
+            <table class="department-table">
+                <thead><tr><th>Departamento</th><th>Status</th><th class="text-end">Ações</th></tr></thead>
+                <tbody id="departmentsTableBody">
+                    @foreach (var item in departamentos)
+                    {
+                        var descricao = string.IsNullOrWhiteSpace(item.Descricao) ? "Sem descrição" : item.Descricao.Trim(); var status = item.Ativo == true ? "active" : "inactive";
+                        <tr data-name="@descricao.ToLowerInvariant()" data-status="@status"><td><div class="department-name"><span class="department-icon">@descricao.Substring(0, 1).ToUpperInvariant()</span><span><span class="d-block">@descricao</span><span class="department-code">Código #@item.Codigo</span></span></div></td><td><span class="department-status @status">@(item.Ativo == true ? "Ativo" : "Inativo")</span></td><td><div class="department-actions"><a class="department-action" asp-action="Details" asp-route-id="@item.Codigo">Ver</a><a class="department-action" asp-action="Edit" asp-route-id="@item.Codigo">Editar</a><a class="department-action delete" asp-action="Delete" asp-route-id="@item.Codigo">Excluir</a></div></td></tr>
+                    }
+                </tbody>
+            </table><div id="departmentEmpty" class="department-empty"><strong>Nenhum departamento encontrado</strong><span>Tente ajustar a busca ou o filtro de status.</span></div>
+        </div>
+    </section>
+</div>
+
+@section Scripts {
+    <script>
+                           (function () { const search = document.getElementById('departmentSearch'); const status = document.getElementById('departmentStatus'); const rows = Array.from(document.querySelectorAll('#departmentsTableBody tr')); const empty = document.getElementById('departmentEmpty'); function filterDepartments() { const term = search.value.trim().toLowerCase(); const selectedStatus = status.value; let visible = 0; rows.forEach(function (row) { const show = row.dataset.name.includes(term) && (selectedStatus === 'all' || row.dataset.status === selectedStatus); row.hidden = !show; if (show) visible++; }); empty.style.display = visible ? 'none' : 'block'; } search.addEventListener('input', filterDepartments); status.addEventListener('change', filterDepartments); filterDepartments(); })();
+    </script>
 }
-    </tbody>
-</table>

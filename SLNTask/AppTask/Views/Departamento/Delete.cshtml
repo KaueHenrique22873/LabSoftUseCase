@@ -1,33 +1,101 @@
 ﻿@model AppTask.Models.Departamento
-
 @{
-    ViewData["Title"] = "Delete";
+    ViewData["Title"] = "Excluir departamento";
 }
 
-<h1>Delete</h1>
+<style>
+    .department-delete-page {
+        max-width: 650px;
+        margin: 0 auto;
+        padding: 48px 0 65px;
+        color: #172033;
+    }
 
-<h3>Are you sure you want to delete this?</h3>
-<div>
-    <h4>Departamento</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Descricao)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Descricao)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Ativo)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Ativo)
-        </dd>
-    </dl>
-    
-    <form asp-action="Delete">
-        <input type="hidden" asp-for="Codigo" />
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
-    </form>
+    .department-delete-card {
+        padding: 30px;
+        border: 1px solid #ffd5da;
+        border-radius: 18px;
+        background: #fff;
+        box-shadow: 0 10px 30px rgba(33,47,77,.05);
+    }
+
+    .department-delete-icon {
+        display: grid;
+        place-items: center;
+        width: 48px;
+        height: 48px;
+        margin-bottom: 17px;
+        border-radius: 14px;
+        background: #ffe4e8;
+        color: #b44a58;
+        font-size: 1.35rem;
+        font-weight: 900;
+    }
+
+    .department-delete-card h1 {
+        margin: 0 0 9px;
+        font-size: 1.7rem;
+        font-weight: 800;
+        letter-spacing: -.04em;
+    }
+
+    .department-delete-card p {
+        color: #718096;
+        line-height: 1.55;
+    }
+
+    .department-delete-name {
+        margin: 20px 0;
+        padding: 15px;
+        border-radius: 11px;
+        background: #f8f9fc;
+        font-weight: 800;
+    }
+
+        .department-delete-name small {
+            display: block;
+            margin-top: 4px;
+            color: #718096;
+            font-weight: 500;
+        }
+
+    .department-delete-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding-top: 20px;
+        border-top: 1px solid #eef1f5;
+    }
+
+    .department-delete-button {
+        border: 0;
+        border-radius: 10px;
+        padding: 10px 17px;
+        background: #b44a58;
+        color: #fff;
+        font-weight: 750;
+    }
+
+        .department-delete-button:hover {
+            background: #963c49;
+        }
+
+    .department-back {
+        color: #718096;
+        font-weight: 700;
+        text-decoration: none;
+    }
+</style>
+
+<div class="department-delete-page">
+    <div class="department-delete-card">
+        <div class="department-delete-icon">!</div>
+        <h1>Excluir departamento?</h1>
+        <p>Essa ação removerá o cadastro do departamento. Confirme somente se você tiver certeza de que deseja continuar.</p>
+        <div class="department-delete-name">@(Model.Descricao ?? "Sem descrição")<small>Código #@Model.Codigo · @(Model.Ativo == true ? "Ativo" : "Inativo")</small></div>
+        <form asp-action="Delete">
+            <input type="hidden" asp-for="Codigo" />
+            <div class="department-delete-actions"><button type="submit" class="department-delete-button">Sim, excluir</button><a asp-action="Index" class="department-back">Cancelar</a></div>
+        </form>
+    </div>
 </div>
