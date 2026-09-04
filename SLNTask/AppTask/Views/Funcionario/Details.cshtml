@@ -1,30 +1,487 @@
 ﻿@model AppTask.Models.Funcionario
+<style>
+    :root {
+        --employee-ink: #172033;
+        --employee-muted: #718096;
+        --employee-line: #e7ebf1;
+        --employee-brand: #5c5ce2;
+        --employee-brand-dark: #4747bc;
+        --employee-red: #b44a58;
+        --employee-red-dark: #963c49;
+        --employee-red-bg: #ffe4e8;
+        --employee-radius: 18px;
+        --employee-ease: cubic-bezier(.23,1,.32,1)
+    }
 
+    .employees-page, .employee-form-page, .employee-details-page, .employee-delete-page {
+        color: var(--employee-ink)
+    }
+
+    .employees-page {
+        padding: 36px 0 58px
+    }
+
+    .employees-hero {
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 24px;
+        margin-bottom: 28px
+    }
+
+    .employees-eyebrow, .employee-form-eyebrow {
+        color: var(--employee-brand);
+        font-size: .74rem;
+        font-weight: 800;
+        letter-spacing: .13em;
+        text-transform: uppercase
+    }
+
+    .employees-hero h1, .employee-form-page h1, .employee-details-page h1 {
+        margin: 7px 0 8px;
+        font-weight: 800;
+        letter-spacing: -.055em;
+        line-height: 1
+    }
+
+    .employees-hero h1 {
+        font-size: clamp(2rem,4vw,3rem)
+    }
+
+    .employees-hero p, .employee-form-page > p, .employee-details-page > p {
+        margin: 0;
+        color: var(--employee-muted)
+    }
+
+    .employee-primary-btn, .employee-submit, .employee-edit {
+        border: 0;
+        border-radius: 11px;
+        padding: 11px 17px;
+        background: var(--employee-brand);
+        color: #fff;
+        font-weight: 750;
+        text-decoration: none;
+        box-shadow: 0 9px 20px rgba(92,92,226,.2);
+        transition: transform .16s var(--employee-ease),background .16s var(--employee-ease)
+    }
+
+        .employee-primary-btn:hover, .employee-submit:hover, .employee-edit:hover {
+            background: var(--employee-brand-dark);
+            color: #fff;
+            transform: translateY(-2px)
+        }
+
+    .employee-stats {
+        display: grid;
+        grid-template-columns: repeat(3,1fr);
+        gap: 15px;
+        margin-bottom: 20px
+    }
+
+        .employee-stats article, .employee-panel, .employee-form-card, .employee-details-card, .employee-delete-card {
+            border: 1px solid var(--employee-line);
+            border-radius: var(--employee-radius);
+            background: #fff;
+            box-shadow: 0 10px 30px rgba(33,47,77,.045)
+        }
+
+        .employee-stats article {
+            padding: 18px 20px
+        }
+
+        .employee-stats span, .employee-stats small {
+            display: block;
+            color: var(--employee-muted)
+        }
+
+        .employee-stats span {
+            font-size: .8rem;
+            font-weight: 700
+        }
+
+        .employee-stats strong {
+            display: block;
+            margin: 8px 0 2px;
+            font-size: 1.9rem;
+            letter-spacing: -.05em
+        }
+
+        .employee-stats small {
+            font-size: .75rem
+        }
+
+    .employee-panel {
+        padding: 22px
+    }
+
+    .employee-toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+        margin-bottom: 18px
+    }
+
+        .employee-toolbar h2 {
+            margin: 0;
+            font-size: 1.08rem
+        }
+
+        .employee-toolbar small {
+            color: var(--employee-muted)
+        }
+
+    .employee-search {
+        min-width: 260px;
+        border: 1px solid #e0e5ed;
+        border-radius: 10px;
+        padding: 9px 12px
+    }
+
+        .employee-search:focus, .employee-input:focus {
+            border-color: var(--employee-brand);
+            outline: 0;
+            box-shadow: 0 0 0 3px rgba(92,92,226,.12)
+        }
+
+    .employee-table-wrap {
+        overflow-x: auto
+    }
+
+    .employee-table {
+        width: 100%;
+        min-width: 620px;
+        border-collapse: separate;
+        border-spacing: 0
+    }
+
+        .employee-table th {
+            padding: 12px 13px;
+            border-bottom: 1px solid var(--employee-line);
+            color: var(--employee-muted);
+            font-size: .72rem;
+            letter-spacing: .08em;
+            text-transform: uppercase
+        }
+
+        .employee-table td {
+            padding: 15px 13px;
+            border-bottom: 1px solid #f0f2f6;
+            vertical-align: middle
+        }
+
+        .employee-table tbody tr:hover {
+            background: #fafaff
+        }
+
+    .employee-name {
+        display: flex;
+        align-items: center;
+        gap: 11px
+    }
+
+    .employee-avatar, .employee-profile-avatar {
+        display: grid;
+        place-items: center;
+        border-radius: 13px;
+        background: #eeedff;
+        color: var(--employee-brand);
+        font-weight: 850
+    }
+
+    .employee-avatar {
+        width: 38px;
+        height: 38px
+    }
+
+    .employee-name strong, .employee-name small {
+        display: block
+    }
+
+    .employee-name strong {
+        font-weight: 750
+    }
+
+    .employee-name small {
+        margin-top: 3px;
+        color: var(--employee-muted);
+        font-size: .78rem
+    }
+
+    .employee-role {
+        color: #39465b;
+        font-weight: 650
+    }
+
+    .employee-actions {
+        display: flex;
+        justify-content: end;
+        gap: 5px;
+        white-space: nowrap
+    }
+
+        .employee-actions a {
+            border-radius: 8px;
+            padding: 6px 9px;
+            color: var(--employee-muted);
+            font-size: .78rem;
+            font-weight: 700;
+            text-decoration: none
+        }
+
+            .employee-actions a:hover {
+                color: var(--employee-brand);
+                background: #f0efff
+            }
+
+            .employee-actions a.danger:hover {
+                color: var(--employee-red);
+                background: var(--employee-red-bg)
+            }
+
+    .employee-empty {
+        display: none;
+        padding: 36px 20px;
+        color: var(--employee-muted);
+        text-align: center
+    }
+
+        .employee-empty strong {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--employee-ink)
+        }
+
+    .employee-form-page, .employee-details-page {
+        max-width: 760px;
+        margin: 0 auto;
+        padding: 38px 0 58px
+    }
+
+        .employee-form-page h1, .employee-details-page h1 {
+            font-size: clamp(2rem,4vw,2.8rem)
+        }
+
+        .employee-form-page > p, .employee-details-page > p {
+            margin-bottom: 24px
+        }
+
+    .employee-form-card {
+        padding: 26px
+    }
+
+        .employee-form-card label {
+            margin-bottom: 7px;
+            font-weight: 750
+        }
+
+    .employee-input {
+        border: 1px solid #e0e5ed;
+        border-radius: 10px;
+        padding: 11px 13px
+    }
+
+    .employee-form-actions, .employee-details-actions, .employee-delete-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px
+    }
+
+    .employee-form-actions {
+        margin-top: 24px
+    }
+
+    .employee-back {
+        color: var(--employee-muted);
+        font-weight: 700;
+        text-decoration: none
+    }
+
+        .employee-back:hover {
+            color: var(--employee-brand)
+        }
+
+    .employee-details-card {
+        padding: 28px
+    }
+
+    .employee-profile {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding-bottom: 22px;
+        border-bottom: 1px solid #eef1f5
+    }
+
+    .employee-profile-avatar {
+        width: 52px;
+        height: 52px;
+        border-radius: 15px;
+        font-size: 1.35rem
+    }
+
+    .employee-profile h2 {
+        margin: 0 0 4px;
+        font-size: 1.3rem
+    }
+
+    .employee-profile span:last-child {
+        color: var(--employee-muted);
+        font-size: .82rem
+    }
+
+    .employee-details-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        padding: 23px 0
+    }
+
+        .employee-details-grid small {
+            display: block;
+            color: var(--employee-muted);
+            font-size: .75rem;
+            font-weight: 800;
+            letter-spacing: .07em;
+            text-transform: uppercase
+        }
+
+        .employee-details-grid strong {
+            display: block;
+            margin-top: 7px
+        }
+
+    .employee-details-actions {
+        padding-top: 20px;
+        border-top: 1px solid #eef1f5
+    }
+
+    .employee-delete-page {
+        max-width: 650px;
+        margin: 0 auto;
+        padding: 48px 0 65px
+    }
+
+    .employee-delete-card {
+        padding: 30px;
+        border-color: #ffd5da
+    }
+
+    .employee-delete-icon {
+        display: grid;
+        place-items: center;
+        width: 48px;
+        height: 48px;
+        margin-bottom: 17px;
+        border-radius: 14px;
+        background: var(--employee-red-bg);
+        color: var(--employee-red);
+        font-size: 1.35rem;
+        font-weight: 900
+    }
+
+    .employee-delete-card h1 {
+        margin: 0 0 9px;
+        font-size: 1.7rem;
+        font-weight: 800;
+        letter-spacing: -.04em
+    }
+
+    .employee-delete-card p {
+        color: var(--employee-muted);
+        line-height: 1.55
+    }
+
+    .employee-delete-name {
+        margin: 20px 0;
+        padding: 15px;
+        border-radius: 11px;
+        background: #f8f9fc;
+        font-weight: 800
+    }
+
+        .employee-delete-name small {
+            display: block;
+            margin-top: 4px;
+            color: var(--employee-muted);
+            font-weight: 500
+        }
+
+    .employee-delete-actions {
+        padding-top: 20px;
+        border-top: 1px solid #eef1f5
+    }
+
+    .employee-delete-button {
+        border: 0;
+        border-radius: 10px;
+        padding: 10px 17px;
+        background: var(--employee-red);
+        color: #fff;
+        font-weight: 750
+    }
+
+        .employee-delete-button:hover {
+            background: var(--employee-red-dark)
+        }
+
+    @@media(max-width:820px) {
+        .employees-hero {
+            align-items: flex-start;
+            flex-direction: column
+        }
+
+        .employee-primary-btn {
+            width: 100%
+        }
+
+        .employee-toolbar {
+            align-items: flex-start;
+            flex-direction: column
+        }
+
+        .employee-search-label, .employee-search {
+            width: 100%;
+            min-width: 0
+        }
+    }
+
+    @@media(max-width:560px) {
+        .employees-page, .employee-form-page, .employee-details-page, .employee-delete-page {
+            padding-top: 27px;
+            padding-bottom: 44px
+        }
+
+        .employee-stats {
+            gap: 9px
+        }
+
+            .employee-stats article {
+                padding: 14px
+            }
+
+            .employee-stats strong {
+                font-size: 1.5rem
+            }
+
+        .employee-details-grid {
+            grid-template-columns: 1fr;
+            gap: 15px
+        }
+
+        .employee-form-card, .employee-details-card, .employee-delete-card {
+            padding: 21px
+        }
+    }
+
+    @@media(prefers-reduced-motion:reduce) {
+        *, *::before, *::after {
+            transition-duration: .01ms !important
+        }
+    }
+</style>
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Detalhes do funcionário"; var nome = string.IsNullOrWhiteSpace(Model.Nome) ? "Sem nome informado" : Model.Nome.Trim(); var cargo = string.IsNullOrWhiteSpace(Model.Cargo) ? "Cargo não informado" : Model.Cargo.Trim();
 }
 
-<h1>Details</h1>
-
-<div>
-    <h4>Funcionario</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Nome)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Nome)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Cargo)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Cargo)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Codigo">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+<div class="employee-details-page"><div class="employee-form-eyebrow">Cadastro de funcionário</div><h1>Detalhes</h1><p>Confira as informações profissionais cadastradas.</p><div class="employee-details-card"><div class="employee-profile"><span class="employee-profile-avatar">@nome.Substring(0, 1).ToUpperInvariant()</span><div><h2>@nome</h2><span>Código #@Model.Codigo</span></div></div><div class="employee-details-grid"><div><small>Nome completo</small><strong>@nome</strong></div><div><small>Cargo</small><strong>@cargo</strong></div></div><div class="employee-details-actions"><a asp-action="Edit" asp-route-id="@Model.Codigo" class="employee-edit">Editar funcionário</a><a asp-action="Index" class="employee-back">Voltar para lista</a></div></div></div>
