@@ -1,14 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using AppClinica.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using AppClinica.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace AppClinica.Controllers
 {
+    [Authorize]
     public class PacienteController : Controller
     {
         private readonly DbclinicaContext _context;
@@ -43,6 +45,7 @@ namespace AppClinica.Controllers
         }
 
         // GET: Paciente/Create
+        [AllowAnonymous]
         public IActionResult Create()
         {
             return View();
@@ -52,6 +55,7 @@ namespace AppClinica.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [AllowAnonymous]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Codigo,Nome,Cpf,Telefone,DataNascimento")] Paciente paciente)
         {
@@ -59,7 +63,8 @@ namespace AppClinica.Controllers
             {
                 _context.Add(paciente);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Login", "Account");
+
             }
             return View(paciente);
         }
