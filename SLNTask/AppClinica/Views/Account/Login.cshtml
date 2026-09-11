@@ -1,0 +1,31 @@
+﻿@model AppClinica.Models.LoginViewModel
+
+@{
+    ViewData["Title"] = "Login";
+}
+
+<div class="col-md-4 mx-auto mt-4">
+    <h3 class="text-center">Acesso do Paciente</h3>
+
+    <form asp-action="Login" method="post">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="mb-3">
+            <label asp-for="Cpf" class="form-label"></label>
+            <input asp-for="Cpf" class="form-control" placeholder="111.222.333-44" />
+            <span asp-validation-for="Cpf" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100 mb-2">Entrar</button>
+    </form>
+
+    <div class="text-center">
+        <a asp-controller="Paciente" asp-action="Create">Criar cadastro</a>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
