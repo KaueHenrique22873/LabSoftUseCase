@@ -1,14 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using AppClinica.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using AppClinica.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace AppClinica.Controllers
 {
+    [Authorize]
     public class ConsultaController : Controller
     {
         private readonly DbclinicaContext _context;
@@ -21,24 +24,22 @@ namespace AppClinica.Controllers
         // GET: Consulta
         public async Task<IActionResult> Index()
         {
-            // Verifica se a sessão existe
-            var pacienteId = HttpContext.Session.GetInt32("PacienteId");
+            var pacienteClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            if (pacienteId == null)
+            if (!int.TryParse(pacienteClaim, out var pacienteId))
             {
-                // Se não estiver logado, redireciona para a tela de login
                 return RedirectToAction("Login", "Account");
             }
 
-            // Código normal da Index...
             var consultas = await _context.Consulta
                 .Include(c => c.Medico)
                 .Include(c => c.Paciente)
-                .Where(c => c.PacienteId == pacienteId) // Mostra apenas as consultas do paciente logado!
+                .Where(c => c.PacienteId == pacienteId)
                 .ToListAsync();
 
             return View(consultas);
         }
+
 
         // GET: Consulta/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -75,6 +76,15 @@ namespace AppClinica.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Codigo,DataHora,StatusConsulta,PacienteId,MedicoId")] Consulta consulta)
         {
+            var pacienteId = HttpContext.Session.GetInt32("PacienteId");
+
+            if (pacienteId == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            consulta.PacienteId = pacienteId.Value;
+
             if (ModelState.IsValid)
             {
                 _context.Add(consulta);
