@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace ClinicaMedica.Interfaces
 {
-    internal class INotificavel
+    public interface INotificavel
     {
+        void EnviarNotificacao(string mensagem);
     }
 }
