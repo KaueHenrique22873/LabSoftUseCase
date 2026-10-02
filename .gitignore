@@ -1,0 +1,48 @@
+## ==========================================
+## Visual Studio & .NET (.gitignore padrão)
+## ==========================================
+
+# Pastas da IDE e configurações de usuário
+.vs/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.userprefs
+
+# Arquivos de Build e Compilação
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+[Tt]emp/
+[D3d11]
+
+# Resultados de Teste e Coverage
+TestResults/
+*.trx
+*.coverage
+*.coveragexml
+
+# Pacotes do NuGet
+*.nupkg
+packages/
+*.nuget.props
+*.nuget.targets
+
+# Arquivos de Depuração e Banco de Dados Local
+*.pdb
+*.cache
+*.ldf
+*.mdf
+*.sdf
+
+# Publicação / Deploy
+*.deploy
+*.pubxml
+*.pubxml.user
+
+# Mac / Windows system files
+.DS_Store
+Thumbs.db
