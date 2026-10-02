@@ -1,10 +1,11 @@
-﻿using System;
+﻿using ClinicaMedica.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ClinicaMedica.Interfaces
+namespace ClinicaMedica
 {
     public class Consulta : INotificavel, IRelatorio
     {
