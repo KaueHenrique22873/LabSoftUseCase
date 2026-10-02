@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ClinicaMedica
+namespace ClinicaMedica.Models
 {
     public class Consulta : INotificavel, IRelatorio
     {

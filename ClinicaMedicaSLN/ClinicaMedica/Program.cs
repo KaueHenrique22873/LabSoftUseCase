@@ -1,5 +1,6 @@
 ﻿using ClinicaMedica;
-
+using ClinicaMedica.Models;
+using ClinicaMedica.Services;
 internal class Program
 {
     private static void Main(string[] args)

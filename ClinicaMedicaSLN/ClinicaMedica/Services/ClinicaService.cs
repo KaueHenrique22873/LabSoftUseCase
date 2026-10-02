@@ -1,10 +1,11 @@
-﻿using System;
+﻿using ClinicaMedica.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ClinicaMedica
+namespace ClinicaMedica.Services
 {
     public class ClinicaService
     {
