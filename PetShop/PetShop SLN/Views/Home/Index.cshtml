@@ -1,8 +1,16 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
-
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+﻿@{ ViewData["Title"] = "Início"; }
+<section class="hero">
+    <div class="hero-content">
+        <span class="hero-kicker">Cuidado em cada detalhe</span>
+        <h1>Seu pet feliz é a nossa melhor história.</h1>
+        <p>Uma experiência simples para organizar clientes, veterinários e agendamentos com todo o carinho que os seus companheiros merecem.</p>
+        <a class="btn btn-primary btn-lg" asp-controller="ReservaServico" asp-action="Create">Agendar atendimento&nbsp; →</a>
+    </div>
+    <div class="hero-art" aria-hidden="true"><div class="pet-orbit">🐾</div></div>
+</section>
+<section class="section-heading"><div><h2>Tudo para uma rotina mais leve</h2><p>Gestão prática para uma equipe que cuida de verdade.</p></div></section>
+<div class="row g-4">
+    <div class="col-md-4"><div class="feature-card"><div class="feature-icon">♡</div><h3>Clientes no controle</h3><p>Cadastre e encontre rapidamente os tutores e os dados importantes de cada família.</p></div></div>
+    <div class="col-md-4"><div class="feature-card"><div class="feature-icon">✚</div><h3>Time especializado</h3><p>Tenha a equipe veterinária organizada por especialidade e pronta para atender.</p></div></div>
+    <div class="col-md-4"><div class="feature-card"><div class="feature-icon">◷</div><h3>Agenda sem complicação</h3><p>Centralize reservas, horários e status dos serviços em um só lugar.</p></div></div>
 </div>

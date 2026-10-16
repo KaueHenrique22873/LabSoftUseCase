@@ -1,15 +1,11 @@
-﻿@model IEnumerable<PetShop_SLN.Models.ReservaServico>
+@model IEnumerable<PetShop_SLN.Models.ReservaServico>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Agendamentos";
 }
 
-<h1>Index</h1>
-
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
+<div class="page-header"><div><h1>Agendamentos</h1><p>Acompanhe todos os serviços marcados.</p></div><a class="btn btn-primary" asp-action="Create">+ Novo cadastro</a></div>
+<div class="table-shell"><table class="table">
     <thead>
         <tr>
             <th>
@@ -43,10 +39,10 @@
                 @Html.DisplayFor(modelItem => item.StatusServico)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Cliente.Codigo)
+                @Html.DisplayFor(modelItem => item.Cliente.Nome)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Veterinario.Codigo)
+                @Html.DisplayFor(modelItem => item.Veterinario.Nome)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Codigo">Edit</a> |
@@ -56,4 +52,4 @@
         </tr>
 }
     </tbody>
-</table>
+</table></div>

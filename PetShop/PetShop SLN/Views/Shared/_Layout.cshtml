@@ -1,59 +1,65 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - PetShop_SLN</title>
+    <title>@ViewData["Title"] - PetCare</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/PetShop_SLN.styles.css" asp-append-version="true" />
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">PetShop_SLN</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Login">Login</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Cliente" asp-action="Index">Cliente</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Veterinario" asp-action="Index">Veterinario</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="ReservaServico" asp-action="Index">ReservaServico</a>
-
-                        </li>
+    <header class="site-header">
+        <nav class="navbar navbar-expand-md">
+            <div class="container">
+                <a class="navbar-brand" asp-controller="Home" asp-action="Index"><span class="brand-mark">♥</span> petcare</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav" aria-controls="mainNav" aria-expanded="false" aria-label="Abrir menu"><span class="navbar-toggler-icon"></span></button>
+                <div id="mainNav" class="navbar-collapse collapse justify-content-end">
+                    <ul class="navbar-nav align-items-md-center">
+                        <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Index">Início</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="Cliente" asp-action="Index">Clientes</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="Veterinario" asp-action="Index">Veterinários</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="ReservaServico" asp-action="Index">Agendamentos</a></li>
+                        <li class="nav-item ms-md-2"><a class="btn btn-primary" asp-controller="Account" asp-action="Login">Entrar</a></li>
                     </ul>
                 </div>
             </div>
         </nav>
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
-
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - PetShop_SLN - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
+    <div class="container"><main role="main" class="pb-5">@RenderBody()</main></div>
+    <footer class="footer"><div class="container d-flex justify-content-between align-items-center"><span>© 2026 PetCare · Cuidado que vira carinho.</span><a asp-controller="Home" asp-action="Privacy">Privacidade</a></div></footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
+
+    <script>
+        // 1. Variável para controlar se a saída da página é uma navegação permitida
+        var navegacaoInterna = false;
+
+        // 2. Quando o utilizador clica em qualquer link <a> do seu site (como o nav link do agendamento)
+        document.querySelectorAll('a').forEach(function(link) {
+            link.addEventListener('click', function() {
+                navegacaoInterna = true;
+            });
+        });
+
+        // 3. Quando o utilizador clica num botão de Guardar/Submeter um formulário
+        document.querySelectorAll('form').forEach(function(form) {
+            form.addEventListener('submit', function() {
+                navegacaoInterna = true;
+            });
+        });
+
+        // 4. O evento que dispara ao sair da página
+        window.addEventListener('pagehide', function () {
+            // Só envia o pedido de Logout ao servidor se NÃO for uma navegação interna
+            if (!navegacaoInterna) {
+                var url = '@Url.Action("LogoutOnClose", "Account")';
+                navigator.sendBeacon(url);
+            }
+        });
+    </script>
+    </script>
 </body>
 </html>

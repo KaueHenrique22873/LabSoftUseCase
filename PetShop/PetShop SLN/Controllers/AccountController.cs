@@ -56,11 +56,16 @@ namespace PetShop_SLN.Controllers
 
             return RedirectToAction("Index", "ReservaServico");
         }
-
-        public async Task<IActionResult> Logout()
+        [IgnoreAntiforgeryToken] // Impede que o servidor bloqueie o pedido do JS
+        [Route("Account/LogoutOnClose")]
+        public async Task<IActionResult> LogoutOnClose()
         {
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            return RedirectToAction("Login");
+            await HttpContext.SignOutAsync(Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme);
+
+            // Apaga também o cookie fisicamente da resposta, por precaução
+            Response.Cookies.Delete(Microsoft.AspNetCore.Authentication.Cookies.CookieAuthenticationDefaults.AuthenticationScheme);
+
+            return Ok();
         }
     }
 }
