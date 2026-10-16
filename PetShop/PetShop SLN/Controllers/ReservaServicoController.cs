@@ -1,14 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PetShop_SLN.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace PetShop_SLN.Controllers
 {
+    [Authorize]
     public class ReservaServicoController : Controller
     {
         private readonly DbPetShopContext _context;
@@ -21,8 +23,12 @@ namespace PetShop_SLN.Controllers
         // GET: ReservaServico
         public async Task<IActionResult> Index()
         {
-            var dbPetShopContext = _context.ReservaServicos.Include(r => r.Cliente).Include(r => r.Veterinario);
-            return View(await dbPetShopContext.ToListAsync());
+            var reservas = await _context.ReservaServicos
+                .Include(r => r.Cliente)
+                .Include(r => r.Veterinario)
+                .ToListAsync();
+
+            return View(reservas);
         }
 
         // GET: ReservaServico/Details/5
@@ -48,8 +54,8 @@ namespace PetShop_SLN.Controllers
         // GET: ReservaServico/Create
         public IActionResult Create()
         {
-            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Codigo", "Codigo");
-            ViewData["VeterinarioId"] = new SelectList(_context.Veterinarios, "Codigo", "Codigo");
+            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Codigo", "Nome");
+            ViewData["VeterinarioId"] = new SelectList(_context.Veterinarios, "Codigo", "Nome");
             return View();
         }
 
@@ -66,8 +72,8 @@ namespace PetShop_SLN.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Codigo", "Codigo", reservaServico.ClienteId);
-            ViewData["VeterinarioId"] = new SelectList(_context.Veterinarios, "Codigo", "Codigo", reservaServico.VeterinarioId);
+            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Codigo", "Nome", reservaServico.ClienteId);
+            ViewData["VeterinarioId"] = new SelectList(_context.Veterinarios, "Codigo", "Nome", reservaServico.VeterinarioId);
             return View(reservaServico);
         }
 
@@ -84,8 +90,8 @@ namespace PetShop_SLN.Controllers
             {
                 return NotFound();
             }
-            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Codigo", "Codigo", reservaServico.ClienteId);
-            ViewData["VeterinarioId"] = new SelectList(_context.Veterinarios, "Codigo", "Codigo", reservaServico.VeterinarioId);
+            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Codigo", "Nome", reservaServico.ClienteId);
+            ViewData["VeterinarioId"] = new SelectList(_context.Veterinarios, "Codigo", "Nome", reservaServico.VeterinarioId);
             return View(reservaServico);
         }
 
@@ -121,8 +127,8 @@ namespace PetShop_SLN.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Codigo", "Codigo", reservaServico.ClienteId);
-            ViewData["VeterinarioId"] = new SelectList(_context.Veterinarios, "Codigo", "Codigo", reservaServico.VeterinarioId);
+            ViewData["ClienteId"] = new SelectList(_context.Clientes, "Codigo", "Nome", reservaServico.ClienteId);
+            ViewData["VeterinarioId"] = new SelectList(_context.Veterinarios, "Codigo", "Nome", reservaServico.VeterinarioId);
             return View(reservaServico);
         }
 
