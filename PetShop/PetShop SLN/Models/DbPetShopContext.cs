@@ -17,8 +17,6 @@ public partial class DbPetShopContext : DbContext
 
     public virtual DbSet<Cliente> Clientes { get; set; }
 
-    public virtual DbSet<Importacao> Importacaos { get; set; }
-
     public virtual DbSet<ReservaServico> ReservaServicos { get; set; }
 
     public virtual DbSet<Veterinario> Veterinarios { get; set; }
@@ -44,23 +42,6 @@ public partial class DbPetShopContext : DbContext
                 .IsUnicode(false);
             entity.Property(e => e.Telefone)
                 .HasMaxLength(20)
-                .IsUnicode(false);
-        });
-
-        modelBuilder.Entity<Importacao>(entity =>
-        {
-            entity
-                .HasNoKey()
-                .ToTable("importacao");
-
-            entity.Property(e => e.Crmv)
-                .HasMaxLength(50)
-                .IsUnicode(false);
-            entity.Property(e => e.Especialidade)
-                .HasMaxLength(50)
-                .IsUnicode(false);
-            entity.Property(e => e.Nome)
-                .HasMaxLength(50)
                 .IsUnicode(false);
         });
 
