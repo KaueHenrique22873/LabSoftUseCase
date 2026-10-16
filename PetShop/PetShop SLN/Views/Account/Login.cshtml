@@ -1,0 +1,44 @@
+﻿using Microsoft.AspNetCore.Mvc;
+
+@model PetShop_SLN.Models.LoginViewModel
+
+@{
+    ViewData["Title"] = "Login - PetShop";
+}
+
+<div class="row justify-content-center mt-5">
+    <div class="col-md-5">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-primary text-white text-center py-3">
+                <h4 class="mb-0">Acessar Conta</h4>
+            </div>
+            <div class="card-body p-4">
+
+                <!-- Exibe erros gerais do ModelState (ex: CPF não encontrado) -->
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                <form asp-controller="Account" asp-action="Login" method="post">
+                    @Html.AntiForgeryToken()
+
+                    <div class="mb-3">
+                        <label asp-for="Cpf" class="form-label fw-bold"></label>
+                        <input asp-for="Cpf" class="form-control form-control-lg" placeholder="000.000.000-00" autofocus />
+                        <span asp-validation-for="Cpf" class="text-danger small"></span>
+                    </div>
+
+                    <div class="d-grid gap-2 mt-4">
+                        <button type="submit" class="btn btn-primary btn-lg">Entrar</button>
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer text-center bg-light py-3">
+                <span class="text-muted">Ainda não tem cadastro?</span>
+                <a asp-controller="Cliente" asp-action="Create" class="text-primary font-weight-bold text-decoration-none">Cadastre-se aqui</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
