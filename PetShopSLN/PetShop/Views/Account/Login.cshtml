@@ -1,0 +1,107 @@
+﻿@model PetShop.Models.LoginViewModel
+
+@{
+    ViewData["Title"] = "Login";
+}
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entrar - PetShop</title>
+
+    <link rel="stylesheet" href="~/css/login.css" asp-append-version="true" />
+</head>
+<body>
+
+    <main class="login-container">
+
+        <section class="login-brand">
+            <div class="brand-logo">🐶</div>
+
+            <h1>
+                Cuidar é um ato de <span>amor.</span>
+            </h1>
+
+            <p>
+                Entre na sua conta e tenha acesso completo à experiência
+                PetShop feita para você e para o seu melhor amigo.
+            </p>
+
+            <ul class="brand-benefits">
+                <li>Atendimento personalizado</li>
+                <li>Produtos selecionados</li>
+                <li>Ambiente seguro</li>
+                <li>Amor em cada detalhe</li>
+            </ul>
+        </section>
+
+        <section class="login-form-area">
+            <div class="login-form-content">
+
+                <header class="form-header">
+                    <h2>Entrar no sistema</h2>
+                    <p>Informe seus dados para continuar.</p>
+                </header>
+
+                @* Exibe mensagem de sucesso vinda do cadastro (Register) *@
+                @if (TempData["Sucesso"] != null)
+                {
+                    <div class="alert alert-success" style="color: green; background-color: #d4edda; border-color: #c3e6cb; padding: 10px; border-radius: 5px; margin-bottom: 15px;">
+                        @TempData["Sucesso"]
+                    </div>
+                }
+
+                <form asp-controller="Account"
+                      asp-action="Login"
+                      method="post">
+
+                    @* Mensagem de erro global (ex: "CPF ou senha inválidos") *@
+                    <div asp-validation-summary="ModelOnly" style="color: red; margin-bottom: 15px;"></div>
+
+                    <div class="form-group">
+                        <label asp-for="Cpf">CPF</label>
+
+                        <input asp-for="Cpf"
+                               type="text"
+                               maxlength="11"
+                               inputmode="numeric"
+                               placeholder="Digite apenas os números"
+                               autocomplete="username"
+                               required />
+
+                        <span asp-validation-for="Cpf" style="color: red;"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Senha">Senha</label>
+
+                        <input asp-for="Senha"
+                               type="password"
+                               placeholder="Digite sua senha"
+                               autocomplete="current-password"
+                               required />
+
+                        <span asp-validation-for="Senha" style="color: red;"></span>
+                    </div>
+
+                    <button class="login-button" type="submit">
+                        Entrar
+                    </button>
+
+                    <p class="form-footer">
+                        Ainda não possui conta?
+                        <a asp-controller="Account" asp-action="Register" style="font-weight: bold; color: inherit;">Cadastre-se aqui</a>
+                    </p>
+                </form>
+
+            </div>
+        </section>
+
+    </main>
+
+    <partial name="_ValidationScriptsPartial" />
+
+</body>
+</html>

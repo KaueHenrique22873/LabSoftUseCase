@@ -1,11 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PetShop.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace PetShop.Controllers
 {
@@ -21,8 +22,35 @@ namespace PetShop.Controllers
         // GET: Pet
         public async Task<IActionResult> Index()
         {
-            var dbPetShopContext = _context.Pets.Include(p => p.CodigoTutorNavigation);
-            return View(await dbPetShopContext.ToListAsync());
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrEmpty(userIdString))
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            var userId = int.Parse(userIdString);
+            var isAdmin = User.IsInRole("admin");
+
+            if (isAdmin)
+            {
+                // Admin: Traz TODOS os pets carregando a relação com o Tutor
+                var todosPets = await _context.Pets
+                    .Include(p => p.CodigoTutorNavigation)
+                    .ToListAsync();
+
+                return View(todosPets);
+            }
+            else
+            {
+                // Usuário comum: Traz apenas os PETS dele
+                var meusPets = await _context.Pets
+                    .Include(p => p.CodigoTutorNavigation)
+                    .Where(p => p.CodigoTutor == userId)
+                    .ToListAsync();
+
+                return View(meusPets);
+            }
         }
 
         // GET: Pet/Details/5
@@ -36,6 +64,7 @@ namespace PetShop.Controllers
             var pet = await _context.Pets
                 .Include(p => p.CodigoTutorNavigation)
                 .FirstOrDefaultAsync(m => m.Codigo == id);
+
             if (pet == null)
             {
                 return NotFound();
@@ -47,24 +76,47 @@ namespace PetShop.Controllers
         // GET: Pet/Create
         public IActionResult Create()
         {
-            ViewData["CodigoTutor"] = new SelectList(_context.Tutors, "Codigo", "Codigo");
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var isAdmin = User.IsInRole("admin");
+
+            if (isAdmin)
+            {
+                // Admin pode escolher qualquer Tutor pelo Nome
+                ViewData["CodigoTutor"] = new SelectList(_context.Tutor, "Codigo", "Nome");
+            }
+            else if (!string.IsNullOrEmpty(userIdString))
+            {
+                // Usuário comum tem o seu próprio Tutor pré-selecionado pelo Nome
+                int userId = int.Parse(userIdString);
+                ViewData["CodigoTutor"] = new SelectList(_context.Tutor.Where(t => t.Codigo == userId), "Codigo", "Nome", userId);
+            }
+
             return View();
         }
 
         // POST: Pet/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Codigo,Nome,CodigoTutor")] Pet pet)
         {
+            // Se for usuário comum, garante que o pet seja associado ao seu próprio ID
+            if (!User.IsInRole("admin"))
+            {
+                var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                if (!string.IsNullOrEmpty(userIdString))
+                {
+                    pet.CodigoTutor = int.Parse(userIdString);
+                }
+            }
+
             if (ModelState.IsValid)
             {
                 _context.Add(pet);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CodigoTutor"] = new SelectList(_context.Tutors, "Codigo", "Codigo", pet.CodigoTutor);
+
+            ViewData["CodigoTutor"] = new SelectList(_context.Tutor, "Codigo", "Nome", pet.CodigoTutor);
             return View(pet);
         }
 
@@ -81,13 +133,13 @@ namespace PetShop.Controllers
             {
                 return NotFound();
             }
-            ViewData["CodigoTutor"] = new SelectList(_context.Tutors, "Codigo", "Codigo", pet.CodigoTutor);
+
+            // Exibe o Nome do Tutor no campo de seleção
+            ViewData["CodigoTutor"] = new SelectList(_context.Tutor, "Codigo", "Nome", pet.CodigoTutor);
             return View(pet);
         }
 
         // POST: Pet/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Codigo,Nome,CodigoTutor")] Pet pet)
@@ -117,7 +169,8 @@ namespace PetShop.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CodigoTutor"] = new SelectList(_context.Tutors, "Codigo", "Codigo", pet.CodigoTutor);
+
+            ViewData["CodigoTutor"] = new SelectList(_context.Tutor, "Codigo", "Nome", pet.CodigoTutor);
             return View(pet);
         }
 
@@ -132,6 +185,7 @@ namespace PetShop.Controllers
             var pet = await _context.Pets
                 .Include(p => p.CodigoTutorNavigation)
                 .FirstOrDefaultAsync(m => m.Codigo == id);
+
             if (pet == null)
             {
                 return NotFound();

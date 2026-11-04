@@ -13,5 +13,5 @@ public partial class Agendamento
 
     public int CodigoPet { get; set; }
 
-    public virtual Pet CodigoPetNavigation { get; set; } = null!;
+    public virtual Pet? CodigoPetNavigation { get; set; }
 }

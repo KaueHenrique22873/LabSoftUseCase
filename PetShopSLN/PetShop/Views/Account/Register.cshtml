@@ -1,0 +1,75 @@
+﻿@model PetShop.Models.Tutor
+
+@{
+    ViewData["Title"] = "Criar Conta";
+}
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criar Conta - PetShop</title>
+    <link rel="stylesheet" href="~/css/login.css" asp-append-version="true" />
+</head>
+<body>
+
+    <main class="login-container">
+
+        <section class="login-brand">
+            <div class="brand-logo">🐶</div>
+            <h1>Junte-se à <span>família!</span></h1>
+            <p>Crie a sua conta em poucos segundos e agende os melhores serviços para o seu pet.</p>
+        </section>
+
+        <section class="login-form-area">
+            <div class="login-form-content">
+
+                <header class="form-header">
+                    <h2>Cadastre-se</h2>
+                    <p>Preencha os dados abaixo para criar o seu acesso.</p>
+                </header>
+
+                <form asp-controller="Account" asp-action="Register" method="post">
+
+                    <div asp-validation-summary="ModelOnly" style="color: red; margin-bottom: 15px;"></div>
+
+                    <div class="form-group">
+                        <label asp-for="Nome">Nome Completo</label>
+                        <input asp-for="Nome" type="text" placeholder="Digite seu nome completo" required />
+                        <span asp-validation-for="Nome" style="color: red;"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Cpf">CPF (apenas números)</label>
+                        <input asp-for="Cpf" type="text" maxlength="11" inputmode="numeric" placeholder="Digite apenas números" required />
+                        <span asp-validation-for="Cpf" style="color: red;"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="Senha">Senha</label>
+                        <input asp-for="Senha" type="password" placeholder="Crie uma senha" required />
+                        <span asp-validation-for="Senha" style="color: red;"></span>
+                    </div>
+
+                    <button class="login-button" type="submit" style="margin-top: 15px;">
+                        Criar Conta
+                    </button>
+
+                    <p class="form-footer">
+                        Já possui uma conta?
+                        <a asp-controller="Account" asp-action="Login" style="font-weight: bold; color: inherit;">Voltar ao Login</a>
+                    </p>
+                </form>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Importação do jQuery antes dos scripts de validação para corrigir o erro -->
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <partial name="_ValidationScriptsPartial" />
+
+</body>
+</html>

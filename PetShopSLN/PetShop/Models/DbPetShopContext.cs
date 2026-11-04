@@ -15,11 +15,11 @@ public partial class DbPetShopContext : DbContext
     {
     }
 
-    public virtual DbSet<Agendamento> Agendamentos { get; set; }
+    public virtual DbSet<Agendamento> Agendamento { get; set; }
 
     public virtual DbSet<Pet> Pets { get; set; }
 
-    public virtual DbSet<Tutor> Tutors { get; set; }
+    public virtual DbSet<Tutor> Tutor { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseSqlServer("Name=ConexaoSqlServer");

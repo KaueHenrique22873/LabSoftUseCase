@@ -1,11 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using PetShop.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace PetShop.Controllers
 {
@@ -21,81 +22,81 @@ namespace PetShop.Controllers
         // GET: Agendamento
         public async Task<IActionResult> Index()
         {
-            var dbPetShopContext = _context.Agendamentos.Include(a => a.CodigoPetNavigation);
-            return View(await dbPetShopContext.ToListAsync());
-        }
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userIdString)) return RedirectToAction("Login", "Account");
 
-        // GET: Agendamento/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
+            var userId = int.Parse(userIdString);
+            var isAdmin = User.IsInRole("admin");
+
+            if (isAdmin)
             {
-                return NotFound();
-            }
+                // Admin vê agendamentos de todos os pets
+                var todosAgendamentos = await _context.Agendamento
+                    .Include(a => a.CodigoPetNavigation)
+                        .ThenInclude(p => p.CodigoTutorNavigation)
+                    .ToListAsync();
 
-            var agendamento = await _context.Agendamentos
-                .Include(a => a.CodigoPetNavigation)
-                .FirstOrDefaultAsync(m => m.Codigo == id);
-            if (agendamento == null)
+                return View(todosAgendamentos);
+            }
+            else
             {
-                return NotFound();
-            }
+                // Usuário comum vê apenas agendamentos dos seus próprios pets
+                var meusAgendamentos = await _context.Agendamento
+                    .Include(a => a.CodigoPetNavigation)
+                        .ThenInclude(p => p.CodigoTutorNavigation)
+                    .Where(a => a.CodigoPetNavigation.CodigoTutor == userId)
+                    .ToListAsync();
 
-            return View(agendamento);
+                return View(meusAgendamentos);
+            }
         }
 
         // GET: Agendamento/Create
         public IActionResult Create()
         {
-            ViewData["CodigoPet"] = new SelectList(_context.Pets, "Codigo", "Codigo");
+            CarregarSelectPets();
             return View();
         }
 
         // POST: Agendamento/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Codigo,MotivoAgendamento,DataHora,CodigoPet")] Agendamento agendamento)
         {
+            // Remove da validação as propriedades de navegação para não bloquear o ModelState
+            ModelState.Remove("CodigoPetNavigation");
+
             if (ModelState.IsValid)
             {
                 _context.Add(agendamento);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CodigoPet"] = new SelectList(_context.Pets, "Codigo", "Codigo", agendamento.CodigoPet);
+
+            CarregarSelectPets(agendamento.CodigoPet);
             return View(agendamento);
         }
 
         // GET: Agendamento/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
-            var agendamento = await _context.Agendamentos.FindAsync(id);
-            if (agendamento == null)
-            {
-                return NotFound();
-            }
-            ViewData["CodigoPet"] = new SelectList(_context.Pets, "Codigo", "Codigo", agendamento.CodigoPet);
+            var agendamento = await _context.Agendamento.FindAsync(id);
+            if (agendamento == null) return NotFound();
+
+            CarregarSelectPets(agendamento.CodigoPet);
             return View(agendamento);
         }
 
         // POST: Agendamento/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Codigo,MotivoAgendamento,DataHora,CodigoPet")] Agendamento agendamento)
         {
-            if (id != agendamento.Codigo)
-            {
-                return NotFound();
-            }
+            if (id != agendamento.Codigo) return NotFound();
+
+            ModelState.Remove("CodigoPetNavigation");
 
             if (ModelState.IsValid)
             {
@@ -106,36 +107,26 @@ namespace PetShop.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!AgendamentoExists(agendamento.Codigo))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    if (!AgendamentoExists(agendamento.Codigo)) return NotFound();
+                    else throw;
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CodigoPet"] = new SelectList(_context.Pets, "Codigo", "Codigo", agendamento.CodigoPet);
+
+            CarregarSelectPets(agendamento.CodigoPet);
             return View(agendamento);
         }
 
         // GET: Agendamento/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
-            var agendamento = await _context.Agendamentos
+            var agendamento = await _context.Agendamento
                 .Include(a => a.CodigoPetNavigation)
                 .FirstOrDefaultAsync(m => m.Codigo == id);
-            if (agendamento == null)
-            {
-                return NotFound();
-            }
+
+            if (agendamento == null) return NotFound();
 
             return View(agendamento);
         }
@@ -145,19 +136,36 @@ namespace PetShop.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var agendamento = await _context.Agendamentos.FindAsync(id);
+            var agendamento = await _context.Agendamento.FindAsync(id);
             if (agendamento != null)
             {
-                _context.Agendamentos.Remove(agendamento);
+                _context.Agendamento.Remove(agendamento);
+                await _context.SaveChangesAsync();
             }
 
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool AgendamentoExists(int id)
         {
-            return _context.Agendamentos.Any(e => e.Codigo == id);
+            return _context.Agendamento.Any(e => e.Codigo == id);
+        }
+
+        // Método auxiliar para popular a lista de seleção de pets (exibe o nome do pet)
+        private void CarregarSelectPets(object petSelecionado = null)
+        {
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userIdString)) return;
+
+            var userId = int.Parse(userIdString);
+            var isAdmin = User.IsInRole("admin");
+
+            // Se for Admin mostra todos os pets, se for Usuário comum mostra apenas os seus pets
+            var queryPets = isAdmin
+                ? _context.Pets.AsQueryable()
+                : _context.Pets.Where(p => p.CodigoTutor == userId);
+
+            ViewData["CodigoPet"] = new SelectList(queryPets, "Codigo", "Nome", petSelecionado);
         }
     }
 }

@@ -13,5 +13,5 @@ public partial class Pet
 
     public virtual ICollection<Agendamento> Agendamentos { get; set; } = new List<Agendamento>();
 
-    public virtual Tutor CodigoTutorNavigation { get; set; } = null!;
+    public virtual Tutor? CodigoTutorNavigation { get; set; }
 }
