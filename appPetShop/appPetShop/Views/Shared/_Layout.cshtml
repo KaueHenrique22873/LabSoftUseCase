@@ -35,6 +35,16 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="ReservaServico" asp-action="Index">Reserva de Serviços</a>
                         </li>
                     </ul>
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="text-muted">Olá, <strong>@User.Identity.Name</strong></span>
+                            <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-outline-danger btn-sm">Sair</button>
+                            </form>
+                        </div>
+                    }
                 </div>
             </div>
         </nav>

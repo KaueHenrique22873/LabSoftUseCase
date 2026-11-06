@@ -1,66 +1,93 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using appPetShop.Models;
+using appPetShop.Security;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
-using appPetShop.Models;
+using System.Security.Cryptography;
+using System.Text;
 
-namespace appPetShop.Controllers
+namespace appPetShop.Controllers;
+
+[AllowAnonymous]
+public class AccountController : Controller
 {
-    public class AccountController : Controller
+    private readonly DbPetShopContext _context;
+
+    public AccountController(DbPetShopContext context)
     {
-        private readonly DbPetShopContext _context;
+        _context = context;
+    }
 
-        public AccountController(DbPetShopContext context)
+    [HttpGet]
+    public IActionResult Login(string? returnUrl = null)
+    {
+        if (User.Identity?.IsAuthenticated == true)
         {
-            _context = context;
-        }
-
-        [HttpGet]
-        public IActionResult Login()
-        {
-            if (User.Identity != null && User.Identity.IsAuthenticated)
-            {
-                return RedirectToAction("Index", "ReservaServico");
-            }
-            return View();
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Login(LoginViewModel model)
-        {
-            if (!ModelState.IsValid) return View(model);
-
-            var cliente = await _context.Clientes
-                .FirstOrDefaultAsync(c => c.Cpf == model.Cpf);
-
-            if (cliente == null)
-            {
-                ModelState.AddModelError("", "CPF não encontrado. Faça seu cadastro primeiro.");
-                return View(model);
-            }
-
-            var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.NameIdentifier, cliente.Codigo.ToString()),
-                new Claim(ClaimTypes.Name, cliente.Nome),
-                new Claim("CPF", cliente.Cpf)
-            };
-
-            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-
-            await HttpContext.SignInAsync(
-                CookieAuthenticationDefaults.AuthenticationScheme,
-                new ClaimsPrincipal(claimsIdentity));
-
             return RedirectToAction("Index", "ReservaServico");
         }
 
-        public async Task<IActionResult> Logout()
+        ViewData["ReturnUrl"] = returnUrl;
+        return View();
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Login(LoginViewModel model, string? returnUrl = null)
+    {
+        ViewData["ReturnUrl"] = returnUrl;
+        if (!ModelState.IsValid)
         {
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            return RedirectToAction("Login");
+            return View(model);
         }
+
+        var usuario = await _context.Usuarios
+            .AsNoTracking()
+            .FirstOrDefaultAsync(u => u.Username == model.Username);
+
+        if (usuario is null || !SenhaValida(model.Senha, usuario.Senha))
+        {
+            ModelState.AddModelError(string.Empty, "Usuário ou senha inválidos.");
+            return View(model);
+        }
+
+        var claims = new List<Claim>
+        {
+            new(ClaimTypes.NameIdentifier, usuario.Codigo.ToString()),
+            new(ClaimTypes.Name, usuario.Username)
+        };
+        var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+        await HttpContext.SignInAsync(
+            CookieAuthenticationDefaults.AuthenticationScheme,
+            new ClaimsPrincipal(identity));
+
+        if (!string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl))
+        {
+            return Redirect(returnUrl);
+        }
+
+        return RedirectToAction("Index", "ReservaServico");
+    }
+
+    private static bool SenhaValida(string senhaInformada, string senhaArmazenada)
+    {
+        if (senhaArmazenada.StartsWith("PBKDF2-SHA256.", StringComparison.Ordinal))
+        {
+            return PasswordService.Verify(senhaInformada, senhaArmazenada);
+        }
+
+        return CryptographicOperations.FixedTimeEquals(
+            Encoding.UTF8.GetBytes(senhaInformada),
+            Encoding.UTF8.GetBytes(senhaArmazenada));
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Logout()
+    {
+        await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        return RedirectToAction(nameof(Login));
     }
 }

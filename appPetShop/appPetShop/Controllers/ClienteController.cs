@@ -8,9 +8,11 @@ using Microsoft.EntityFrameworkCore;
 using System.Text;
 using System.Security.Cryptography;
 using appPetShop.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace appPetShop.Controllers
 {
+    [Authorize]
     public class ClienteController : Controller
     {
         private readonly DbPetShopContext _context;
@@ -45,6 +47,7 @@ namespace appPetShop.Controllers
         }
 
         // GET: Cliente/Create
+        [AllowAnonymous]
         public IActionResult Create()
         {
             return View();
@@ -55,6 +58,7 @@ namespace appPetShop.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [AllowAnonymous]
         public async Task<IActionResult> Create([Bind("Codigo,Nome,Cpf,Telefone,DataNascimento")] Cliente cliente)
         {
             if (ModelState.IsValid)
@@ -102,10 +106,19 @@ namespace appPetShop.Controllers
             {
                 try
                 {
-                    // 🔒 Garante que o novo CPF editado também seja convertido em Hash
-                    cliente.Cpf = GerarHashCpf(cliente.Cpf);
+                    var clienteAtual = await _context.Clientes.FindAsync(id);
+                    if (clienteAtual == null)
+                    {
+                        return NotFound();
+                    }
 
-                    _context.Update(cliente);
+                    clienteAtual.Nome = cliente.Nome;
+                    clienteAtual.Cpf = cliente.Cpf;
+                    clienteAtual.Telefone = cliente.Telefone;
+                    clienteAtual.DataNascimento = cliente.DataNascimento;
+                    // 🔒 Garante que o novo CPF editado também seja convertido em Hash
+                    clienteAtual.Cpf = GerarHashCpf(clienteAtual.Cpf);
+
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)

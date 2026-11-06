@@ -13,16 +13,21 @@
             </div>
             <div class="card-body p-4">
 
-                @* Exibe erros globais do ModelState (ex: CPF não encontrado) *@
                 <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
 
-                <form asp-action="Login" method="post">
+                <form asp-action="Login" asp-route-returnUrl="@ViewData["ReturnUrl"]" method="post">
                     @Html.AntiForgeryToken()
 
                     <div class="mb-3">
-                        <label asp-for="Cpf" class="form-label fw-semibold">CPF</label>
-                        <input asp-for="Cpf" class="form-control form-control-lg" placeholder="Digite seu CPF" autofocus />
-                        <span asp-validation-for="Cpf" class="text-danger small"></span>
+                        <label asp-for="Username" class="form-label fw-semibold">Usuário</label>
+                        <input asp-for="Username" class="form-control form-control-lg" placeholder="Digite seu usuário" autocomplete="username" autofocus />
+                        <span asp-validation-for="Username" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Senha" class="form-label fw-semibold">Senha</label>
+                        <input asp-for="Senha" class="form-control form-control-lg" placeholder="Digite sua senha" autocomplete="current-password" />
+                        <span asp-validation-for="Senha" class="text-danger small"></span>
                     </div>
 
                     <div class="d-grid gap-2 mt-4">
@@ -35,7 +40,7 @@
             <div class="card-footer text-center py-3 bg-light rounded-bottom-3">
                 <p class="mb-0 text-muted small">
                     Ainda não tem cadastro?
-                    <a asp-controller="Cliente" asp-action="Create" class="text-primary text-decoration-none fw-bold">Cadastre-se aqui</a>
+                    <a asp-controller="Usuario" asp-action="Create">Cadastre-se aqui</a>
                 </p>
             </div>
         </div>

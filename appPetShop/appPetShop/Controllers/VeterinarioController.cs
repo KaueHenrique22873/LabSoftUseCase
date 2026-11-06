@@ -5,10 +5,12 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 using appPetShop.Models;
 
 namespace appPetShop.Controllers
 {
+    [Authorize]
     public class VeterinarioController : Controller
     {
         private readonly DbPetShopContext _context;

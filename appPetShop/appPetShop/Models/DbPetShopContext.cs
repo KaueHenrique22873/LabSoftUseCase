@@ -19,6 +19,8 @@ public partial class DbPetShopContext : DbContext
 
     public virtual DbSet<ReservaServico> ReservaServicos { get; set; }
 
+    public virtual DbSet<Usuario> Usuarios { get; set; }
+
     public virtual DbSet<Veterinario> Veterinarios { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -28,14 +30,14 @@ public partial class DbPetShopContext : DbContext
     {
         modelBuilder.Entity<Cliente>(entity =>
         {
-            entity.HasKey(e => e.Codigo).HasName("PK__Cliente__06370DAD8696F84B");
+            entity.HasKey(e => e.Codigo).HasName("PK__Cliente__06370DAD83358EB9");
 
             entity.ToTable("Cliente");
 
-            entity.HasIndex(e => e.Cpf, "UQ__Cliente__C1FF930947AB4EA3").IsUnique();
+            entity.HasIndex(e => e.Cpf, "UQ__Cliente__C1FF9309E1755996").IsUnique();
 
             entity.Property(e => e.Cpf)
-                .HasMaxLength(14)
+                .HasMaxLength(64)
                 .IsUnicode(false);
             entity.Property(e => e.Nome)
                 .HasMaxLength(100)
@@ -47,7 +49,7 @@ public partial class DbPetShopContext : DbContext
 
         modelBuilder.Entity<ReservaServico>(entity =>
         {
-            entity.HasKey(e => e.Codigo).HasName("PK__ReservaS__06370DAD78B83CE9");
+            entity.HasKey(e => e.Codigo).HasName("PK__ReservaS__06370DADCF1A8985");
 
             entity.ToTable("ReservaServico");
 
@@ -68,13 +70,29 @@ public partial class DbPetShopContext : DbContext
                 .HasConstraintName("FK_ReservaServico_Veterinario");
         });
 
+        modelBuilder.Entity<Usuario>(entity =>
+        {
+            entity.HasKey(e => e.Codigo).HasName("PK__Usuario__06370DAD78D8BD47");
+
+            entity.ToTable("Usuario");
+
+            entity.Property(e => e.Senha)
+                .HasMaxLength(255)
+                .IsUnicode(false)
+                .HasColumnName("senha");
+            entity.Property(e => e.Username)
+                .HasMaxLength(100)
+                .IsUnicode(false)
+                .HasColumnName("username");
+        });
+
         modelBuilder.Entity<Veterinario>(entity =>
         {
-            entity.HasKey(e => e.Codigo).HasName("PK__Veterina__06370DAD058575FF");
+            entity.HasKey(e => e.Codigo).HasName("PK__Veterina__06370DAD5FCDABC4");
 
             entity.ToTable("Veterinario");
 
-            entity.HasIndex(e => e.Crmv, "UQ__Veterina__AD6F9BA49FFF8FD0").IsUnique();
+            entity.HasIndex(e => e.Crmv, "UQ__Veterina__AD6F9BA47CF6953C").IsUnique();
 
             entity.Property(e => e.Crmv)
                 .HasMaxLength(20)
