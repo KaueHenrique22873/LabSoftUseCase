@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using System.Text;
+using System.Security.Cryptography;
 using appPetShop.Models;
 
 namespace appPetShop.Controllers
@@ -57,6 +59,9 @@ namespace appPetShop.Controllers
         {
             if (ModelState.IsValid)
             {
+                // 🔒 Aplica o Hash no CPF antes de salvar no banco
+                cliente.Cpf = GerarHashCpf(cliente.Cpf);
+
                 _context.Add(cliente);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -83,6 +88,7 @@ namespace appPetShop.Controllers
         // POST: Cliente/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: Cliente/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Codigo,Nome,Cpf,Telefone,DataNascimento")] Cliente cliente)
@@ -96,6 +102,9 @@ namespace appPetShop.Controllers
             {
                 try
                 {
+                    // 🔒 Garante que o novo CPF editado também seja convertido em Hash
+                    cliente.Cpf = GerarHashCpf(cliente.Cpf);
+
                     _context.Update(cliente);
                     await _context.SaveChangesAsync();
                 }
@@ -114,6 +123,7 @@ namespace appPetShop.Controllers
             }
             return View(cliente);
         }
+ 
 
         // GET: Cliente/Delete/5
         public async Task<IActionResult> Delete(int? id)
@@ -151,6 +161,23 @@ namespace appPetShop.Controllers
         private bool ClienteExists(int id)
         {
             return _context.Clientes.Any(e => e.Codigo == id);
+        }
+        private string GerarHashCpf(string cpf)
+        {
+            if (string.IsNullOrWhiteSpace(cpf))
+                return string.Empty;
+
+            // 1. Remove caracteres não numéricos (pontos, traços, espaços)
+            string cpfLimpo = string.Concat(Array.FindAll(cpf.ToCharArray(), char.IsDigit));
+
+            // 2. Converte para bytes UTF-8
+            byte[] inputBytes = Encoding.UTF8.GetBytes(cpfLimpo);
+
+            // 3. Gera o Hash SHA-256
+            byte[] hashBytes = SHA256.HashData(inputBytes);
+
+            // 4. Retorna em formato Hexadecimal (64 caracteres)            
+            return Convert.ToHexString(hashBytes).ToLowerInvariant();
         }
     }
 }
