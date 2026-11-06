@@ -1,0 +1,48 @@
+﻿@model appPetShop.Models.LoginViewModel
+
+@{
+    ViewData["Title"] = "Acessar Conta";
+}
+
+<div class="row justify-content-center mt-5">
+    <div class="col-md-5 col-lg-4">
+        <div class="card shadow-sm border-0 rounded-3">
+            <div class="card-header bg-primary text-white text-center py-3 rounded-top-3">
+                <h4 class="mb-0 fw-bold"><i class="bi bi-person-circle me-2"></i>Entrar no PetShop</h4>
+            </div>
+            <div class="card-body p-4">
+
+                @* Exibe erros globais do ModelState (ex: CPF não encontrado) *@
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                <form asp-action="Login" method="post">
+                    @Html.AntiForgeryToken()
+
+                    <div class="mb-3">
+                        <label asp-for="Cpf" class="form-label fw-semibold">CPF</label>
+                        <input asp-for="Cpf" class="form-control form-control-lg" placeholder="Digite seu CPF" autofocus />
+                        <span asp-validation-for="Cpf" class="text-danger small"></span>
+                    </div>
+
+                    <div class="d-grid gap-2 mt-4">
+                        <button type="submit" class="btn btn-primary btn-lg fw-bold">
+                            Entrar
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer text-center py-3 bg-light rounded-bottom-3">
+                <p class="mb-0 text-muted small">
+                    Ainda não tem cadastro?
+                    <a asp-controller="Cliente" asp-action="Create" class="text-primary text-decoration-none fw-bold">Cadastre-se aqui</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
