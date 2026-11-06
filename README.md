@@ -124,3 +124,24 @@ Por segurança na tela de login não deve conter nenhum menu de acesso direto.
 SUGESTÃO
 Na pasta shared, crie um Layout especifico para Login.
 
+## Atualizar MAPEAMENTO banco de dados projeto
+
+Para atualizar o seu DbTasksContext e gerar a Model usuario automaticamente sem perder suas configurações, abra o Package Manager Console (no Visual Studio em Ferramentas > Gerenciador de Pacotes NuGet > Console do Gerenciador de Pacotes) ou o Terminal na raiz do projeto e execute:
+
+Pelo Package Manager Console:
+
+Use esse comando para adicionar novas tabelas, se seu projeto já contém a classe context configurada
+
+```sql
+
+
+Scaffold-DbContext "Server=LOCALHOST;Database=dbPetShop;User Id=sa;Password=SUA_SENHA_AQUI;TrustServerCertificate=True;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models -Tables Usuario -Force
+```
+
+Se ainda não funcionar, execute
+```sql
+
+Scaffold-DbContext "Name=ConexaoSqlServer" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models -Force
+```
+
+Nota: Certifique-se de substituir SUA_SENHA_AQUI pela senha configurada no seu SQL Server.
